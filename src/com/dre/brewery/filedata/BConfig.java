@@ -12,6 +12,7 @@ import com.dre.brewery.integration.barrel.WGBarrel5;
 import com.dre.brewery.integration.barrel.WGBarrel6;
 import com.dre.brewery.integration.barrel.WGBarrel7;
 import com.dre.brewery.integration.item.BreweryPluginItem;
+import com.dre.brewery.integration.item.ItemsAdderPluginItem;
 import com.dre.brewery.integration.item.MMOItemsPluginItem;
 import com.dre.brewery.integration.item.SlimefunPluginItem;
 import com.dre.brewery.recipe.BCauldronRecipe;
@@ -57,6 +58,7 @@ public class BConfig {
 	public static boolean useGMInventories; // GamemodeInventories
 	public static Boolean hasSlimefun = null; // Slimefun ; Null if not checked
 	public static Boolean hasMMOItems = null; // MMOItems ; Null if not checked
+	public static Boolean hasItemsAdder = null; // ItemsAdder ; Null if not checked
 	public static boolean hasChestShop;
 	public static boolean hasShopKeepers;
 
@@ -212,8 +214,7 @@ public class BConfig {
 		useBlocklocker = config.getBoolean("useBlockLocker", false) && plMan.isPluginEnabled("BlockLocker");
 		virtualChestPerms = config.getBoolean("useVirtualChestPerms", false);
 		// The item util has been removed in Vault 1.7+
-		hasVault = plMan.isPluginEnabled("Vault")
-			&& Integer.parseInt(plMan.getPlugin("Vault").getDescription().getVersion().split("\\.")[1]) <= 6;
+		hasVault = plMan.isPluginEnabled("Vault") && Integer.parseInt(plMan.getPlugin("Vault").getDescription().getVersion().split("\\.")[1]) <= 6;
 		hasChestShop = plMan.isPluginEnabled("ChestShop");
 		hasShopKeepers = plMan.isPluginEnabled("Shopkeepers");
 
@@ -261,6 +262,7 @@ public class BConfig {
 		PluginItem.registerForConfig("mmoitems", MMOItemsPluginItem::new);
 		PluginItem.registerForConfig("slimefun", SlimefunPluginItem::new);
 		PluginItem.registerForConfig("exoticgarden", SlimefunPluginItem::new);
+		PluginItem.registerForConfig("itemsadder", ItemsAdderPluginItem::new);
 
 		// Loading custom items
 		ConfigurationSection configSection = config.getConfigurationSection("customItems");
@@ -316,26 +318,24 @@ public class BConfig {
 
 		// loading drainItems
 		List<String> drainList = config.getStringList("drainItems");
-		if (drainList != null) {
-			for (String drainString : drainList) {
-				String[] drainSplit = drainString.split("/");
-				if (drainSplit.length > 1) {
-					Material mat = Material.matchMaterial(drainSplit[0]);
-					int strength = p.parseInt(drainSplit[1]);
-					if (mat == null && hasVault && strength > 0) {
-						try {
-							net.milkbowl.vault.item.ItemInfo vaultItem = net.milkbowl.vault.item.Items.itemByString(drainSplit[0]);
-							if (vaultItem != null) {
-								mat = vaultItem.getType();
-							}
-						} catch (Exception e) {
-							P.p.errorLog("Could not check vault for Item Name");
-							e.printStackTrace();
+		for (String drainString : drainList) {
+			String[] drainSplit = drainString.split("/");
+			if (drainSplit.length > 1) {
+				Material mat = Material.matchMaterial(drainSplit[0]);
+				int strength = p.parseInt(drainSplit[1]);
+				if (mat == null && hasVault && strength > 0) {
+					try {
+						net.milkbowl.vault.item.ItemInfo vaultItem = net.milkbowl.vault.item.Items.itemByString(drainSplit[0]);
+						if (vaultItem != null) {
+							mat = vaultItem.getType();
 						}
+					} catch (Exception e) {
+						P.p.errorLog("Could not check vault for Item Name");
+						e.printStackTrace();
 					}
-					if (mat != null && strength > 0) {
-						drainItems.put(mat, strength);
-					}
+				}
+				if (mat != null && strength > 0) {
+					drainItems.put(mat, strength);
 				}
 			}
 		}

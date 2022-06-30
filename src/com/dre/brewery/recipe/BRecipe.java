@@ -157,14 +157,12 @@ public class BRecipe {
 		}
 
 		List<String> effectStringList = configSectionRecipes.getStringList(recipeId + ".effects");
-		if (effectStringList != null) {
-			for (String effectString : effectStringList) {
-				BEffect effect = new BEffect(effectString);
-				if (effect.isValid()) {
-					recipe.effects.add(effect);
-				} else {
-					P.p.errorLog("Error adding Effect to Recipe: " + recipe.getRecipeName());
-				}
+		for (String effectString : effectStringList) {
+			BEffect effect = new BEffect(effectString);
+			if (effect.isValid()) {
+				recipe.effects.add(effect);
+			} else {
+				P.p.errorLog("Error adding Effect to Recipe: " + recipe.getRecipeName());
 			}
 		}
 		return recipe;
@@ -177,9 +175,6 @@ public class BRecipe {
 			ingredientsList.add(cfg.getString(recipeId + ".ingredients", "x"));
 		} else {
 			ingredientsList = cfg.getStringList(recipeId + ".ingredients");
-		}
-		if (ingredientsList == null) {
-			return null;
 		}
 		List<RecipeItem> ingredients = new ArrayList<>(ingredientsList.size());
 		listLoop: for (String item : ingredientsList) {
@@ -208,7 +203,7 @@ public class BRecipe {
 			}
 
 			// Check if this is a Plugin Item
-			String[] pluginItem = matParts[0].split(":");
+			String[] pluginItem = matParts[0].split(":", 2);
 			if (pluginItem.length > 1) {
 				RecipeItem custom = PluginItem.fromConfig(pluginItem[0], pluginItem[1]);
 				if (custom != null) {
