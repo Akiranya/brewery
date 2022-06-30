@@ -1,6 +1,7 @@
 package com.dre.brewery.utility;
 
 import com.palmergames.bukkit.towny.TownyAPI;
+import com.palmergames.bukkit.towny.TownyUniverse;
 import com.palmergames.bukkit.towny.exceptions.NotRegisteredException;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
@@ -15,15 +16,15 @@ public class TownyUtil {
 
     public static boolean isInsideTown(Location location) {
         try {
-            final TownBlock townBlock = TownyAPI.getInstance().getTownBlock(location);
+            TownBlock townBlock = TownyAPI.getInstance().getTownBlock(location);
             if (townBlock != null) {
-                final Town town = TownyAPI.getInstance().getTownBlock(location).getTown();
+                Town town = TownyAPI.getInstance().getTownBlock(location).getTown();
                 if (town != null) {
                     // Execute your code here
                     return true;
                 }
             }
-        } catch (NullPointerException | NotRegisteredException e) {
+        } catch (NullPointerException | NotRegisteredException ignored) {
         }
         return false;
     }
@@ -32,18 +33,19 @@ public class TownyUtil {
         if (player == null)
             return isInsideTown(location);
         try {
-            final Resident resident = TownyAPI.getInstance().getDataSource().getResident(player.getName());
+            Resident resident = TownyUniverse.getInstance().getResident(player.getUniqueId());
+            if (resident == null) return false;
+
             TownBlock townBlock = TownyAPI.getInstance().getTownBlock(location);
-            if (townBlock != null && townBlock.hasResident()
-                    && resident.equals(townBlock.getResident()))
+            if (townBlock != null && townBlock.hasResident() && resident.equals(townBlock.getResident()))
                 return true;
 
-            final Town town = TownyAPI.getInstance().getTownBlock(location).getTown();
+            Town town = TownyAPI.getInstance().getTownBlock(location).getTown();
             if (resident.getTown().equals(town)) {
                 // Execute your code here
                 return true;
             }
-        } catch (NullPointerException | NotRegisteredException e) {
+        } catch (NullPointerException | NotRegisteredException ignored) {
         }
         return false;
     }
