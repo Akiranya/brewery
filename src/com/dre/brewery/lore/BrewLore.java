@@ -154,7 +154,7 @@ public class BrewLore {
 		}
 		if (!brew.isUnlabeled()) {
 			if (distillRuns > 1) {
-				prefix = prefix + distillRuns + P.p.languageReader.get("Brew_-times") + " ";
+				prefix = prefix + distillRuns + " " + P.p.languageReader.get("Brew_-times") + " ";
 			}
 		}
 		if (brew.isUnlabeled() && brew.hasRecipe() && distillRuns < brew.getCurrentRecipe().getDistillRuns()) {
@@ -480,11 +480,8 @@ public class BrewLore {
 		if (lore.size() < 2) {
 			return false;
 		}
-		if (Type.INGR.findInLore(lore) != -1) {
-			// Ingredient lore present, must be quality colored
-			return true;
-		}
-		return false;
+		// Ingredient lore present, must be quality colored
+		return Type.INGR.findInLore(lore) != -1;
 		//!meta.getLore().get(1).startsWith("§7");
 	}
 
