@@ -7,7 +7,6 @@ import com.dre.brewery.filedata.BConfig;
 import com.dre.brewery.utility.BUtil;
 import com.dre.brewery.utility.StringParser;
 import com.dre.brewery.utility.Tuple;
-import org.apache.commons.lang.NotImplementedException;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
@@ -712,7 +711,7 @@ public class BRecipe {
 	}
 
 	public void setSaveInData(boolean saveInData) {
-		throw new NotImplementedException();
+		throw new UnsupportedOperationException();
 		//this.saveInData = saveInData;
 	}
 

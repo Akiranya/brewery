@@ -8,8 +8,6 @@ import com.dre.brewery.recipe.PluginItem;
 import com.dre.brewery.recipe.SimpleItem;
 import com.dre.brewery.utility.BUtil;
 import com.dre.brewery.utility.BoundingBox;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -24,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.IntStream;
 
 public class BData {
 
@@ -65,13 +64,13 @@ public class BData {
 				int hash = data.getInt("brewsCreatedH");
 				// Check the hash to prevent tampering with statistics
 				if (brewsCreated.hashCode() == hash) {
-					P.p.brewsCreated = brewsCreated.get(0);
-					P.p.brewsCreatedCmd = brewsCreated.get(1);
-					P.p.exc = brewsCreated.get(2);
-					P.p.good = brewsCreated.get(3);
-					P.p.norm = brewsCreated.get(4);
-					P.p.bad = brewsCreated.get(5);
-					P.p.terr = brewsCreated.get(6);
+					P.p.stats.brewsCreated = brewsCreated.get(0);
+					P.p.stats.brewsCreatedCmd = brewsCreated.get(1);
+					P.p.stats.exc = brewsCreated.get(2);
+					P.p.stats.good = brewsCreated.get(3);
+					P.p.stats.norm = brewsCreated.get(4);
+					P.p.stats.bad = brewsCreated.get(5);
+					P.p.stats.terr = brewsCreated.get(6);
 				}
 			}
 
@@ -120,17 +119,17 @@ public class BData {
 			}
 
 			// Store how many legacy brews were created
-			if (P.p.brewsCreated <= 0) {
-				P.p.brewsCreated = 0;
-				P.p.brewsCreatedCmd = 0;
-				P.p.exc = 0;
-				P.p.good = 0;
-				P.p.norm = 0;
-				P.p.bad = 0;
-				P.p.terr = 0;
+			if (P.p.stats.brewsCreated <= 0) {
+				P.p.stats.brewsCreated = 0;
+				P.p.stats.brewsCreatedCmd = 0;
+				P.p.stats.exc = 0;
+				P.p.stats.good = 0;
+				P.p.stats.norm = 0;
+				P.p.stats.bad = 0;
+				P.p.stats.terr = 0;
 				if (!Brew.noLegacy()) {
 					for (int i = Brew.legacyPotions.size(); i > 0; i--) {
-						P.p.metricsForCreate(false);
+						P.p.stats.metricsForCreate(false);
 					}
 				}
 			}
@@ -363,7 +362,7 @@ public class BData {
 							if (woLength > 1) {
 								System.arraycopy(wo, 0, points, st.length, woLength);
 							}
-							int[] locs = ArrayUtils.toPrimitive(Arrays.stream(points).map(s -> P.p.parseInt(s)).toArray(Integer[]::new));
+							int[] locs = Arrays.stream(points).mapToInt(s -> P.p.parseInt(s)).toArray();
 							try {
 								box = BoundingBox.fromPoints(locs);
 							} catch (Exception e) {
@@ -406,11 +405,11 @@ public class BData {
 					String[] splitted = loc.split("/");
 					if (splitted.length == 5) {
 
-						double x = NumberUtils.toDouble(splitted[0]);
-						double y = NumberUtils.toDouble(splitted[1]);
-						double z = NumberUtils.toDouble(splitted[2]);
-						float pitch = NumberUtils.toFloat(splitted[3]);
-						float yaw = NumberUtils.toFloat(splitted[4]);
+						double x = P.p.parseDouble(splitted[0]);
+						double y = P.p.parseDouble(splitted[1]);
+						double z = P.p.parseDouble(splitted[2]);
+						float pitch = P.p.parseFloat(splitted[3]);
+						float yaw = P.p.parseFloat(splitted[4]);
 						Location location = new Location(world, x, y, z, yaw, pitch);
 
 						initWakeups.add(new Wakeup(location));
