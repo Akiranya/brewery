@@ -3,7 +3,7 @@ version: ${project.version}
 main: com.dre.brewery.P
 description: ${project.description}
 depend: [Towny]
-softdepend: [LWC, LogBlock, WorldGuard, GriefPrevention, Vault, ChestShop, Shopkeepers, BlockLocker]
+softdepend: [LWC, LogBlock, WorldGuard, GriefPrevention, Vault, ChestShop, Shopkeepers, BlockLocker, PlaceholderAPI]
 authors: [Milan Albrecht, Frank Baumann, ProgrammerDan, Daniel Saukel]
 api-version: 1.13
 commands:

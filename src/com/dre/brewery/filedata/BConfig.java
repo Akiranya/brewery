@@ -61,6 +61,7 @@ public class BConfig {
 	public static Boolean hasItemsAdder = null; // ItemsAdder ; Null if not checked
 	public static boolean hasChestShop;
 	public static boolean hasShopKeepers;
+	public static boolean hasPAPI;
 
 	// Barrel
 	public static boolean openEverywhere;
@@ -217,6 +218,7 @@ public class BConfig {
 		hasVault = plMan.isPluginEnabled("Vault") && Integer.parseInt(plMan.getPlugin("Vault").getDescription().getVersion().split("\\.")[1]) <= 6;
 		hasChestShop = plMan.isPluginEnabled("ChestShop");
 		hasShopKeepers = plMan.isPluginEnabled("Shopkeepers");
+		hasPAPI = plMan.isPluginEnabled("PlaceholderAPI");
 
 		// various Settings
 		DataSave.autosave = config.getInt("autosave", 3);

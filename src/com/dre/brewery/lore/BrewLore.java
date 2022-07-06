@@ -1,5 +1,6 @@
 package com.dre.brewery.lore;
 
+import com.dre.brewery.integration.text.PlaceholderAPIProxy;
 import com.dre.brewery.recipe.BEffect;
 import com.dre.brewery.BIngredients;
 import com.dre.brewery.recipe.BRecipe;
@@ -43,7 +44,11 @@ public class BrewLore {
 		if (lineAddedOrRem) {
 			updateSpacer();
 		}
-		meta.setLore(lore);
+		if (BConfig.hasPAPI) {
+			meta.setLore(PlaceholderAPIProxy.parseList(lore));
+		} else {
+			meta.setLore(lore);
+		}
 		return meta;
 	}
 
