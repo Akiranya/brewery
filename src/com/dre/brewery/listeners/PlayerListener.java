@@ -5,9 +5,8 @@ import com.dre.brewery.filedata.BConfig;
 import com.dre.brewery.filedata.UpdateChecker;
 import com.dre.brewery.utility.BUtil;
 import com.dre.brewery.utility.LegacyUtil;
-import com.dre.brewery.utility.TownyUtil;
-
 import com.dre.brewery.utility.PermissionUtil;
+import com.dre.brewery.utility.TownyUtil;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -60,10 +59,14 @@ public class PlayerListener implements Listener {
 				return;
 			}
 			event.setCancelled(true);
-			if(!TownyUtil.isInsideTown(clickedBlock.getLocation(), player)) {
+
+			// Towny integration starts
+			if (BConfig.useTowny && !TownyUtil.canSwitch(clickedBlock.getLocation(), player)) {
 				P.p.msg(player, P.p.languageReader.get("Towny_ForeignSealingTable"));
 				return;
 			}
+			// Towny integration ends
+
 			if (BConfig.enableSealingTable) {
 				BSealer sealer = new BSealer(player);
 				event.getPlayer().openInventory(sealer.getInventory());
@@ -85,7 +88,7 @@ public class PlayerListener implements Listener {
 
 		// -- Opening a Minecraft Barrel --
 		if (P.use1_14 && type == Material.BARREL) {
-			if (!player.hasPermission("brewery.openbarrel.mc") && TownyUtil.isInsideTown(clickedBlock.getLocation())) {
+			if (!player.hasPermission("brewery.openbarrel.mc")) {
 				event.setCancelled(true);
 				P.p.msg(player, P.p.languageReader.get("Error_NoPermissions"));
 			}
@@ -119,10 +122,12 @@ public class PlayerListener implements Listener {
 			
 			event.setCancelled(true);
 
-			if(!TownyUtil.isInsideTown(clickedBlock.getLocation(), player)) {
+			// Towny integration starts
+			if (BConfig.useTowny && !TownyUtil.canSwitch(clickedBlock.getLocation(), player)) {
 				P.p.msg(player, P.p.languageReader.get("Towny_ForeignBarrel"));
 				return;
 			}
+			// Towny integration ends
 
 			if (!barrel.hasPermsOpen(player, event)) {
 				return;
@@ -182,34 +187,32 @@ public class PlayerListener implements Listener {
 	public void onPlayerItemConsume(PlayerItemConsumeEvent event) {
 		Player player = event.getPlayer();
 		ItemStack item = event.getItem();
-		if (item != null) {
-			if (item.getType() == Material.POTION) {
-				Brew brew = Brew.get(item);
-				if (brew != null) {
-					if (!BPlayer.drink(brew, item.getItemMeta(), player)) {
+		if (item.getType() == Material.POTION) {
+			Brew brew = Brew.get(item);
+			if (brew != null) {
+				if (!BPlayer.drink(brew, item.getItemMeta(), player)) {
+					event.setCancelled(true);
+					return;
+				}
+				/*if (player.getGameMode() != org.bukkit.GameMode.CREATIVE) {
+					brew.remove(item);
+				}*/
+				if (P.use1_9) {
+					if (player.getGameMode() != GameMode.CREATIVE) {
+						// replace the potion with an empty potion to avoid effects
+						event.setItem(new ItemStack(Material.POTION));
+					} else {
+						// Dont replace the item when keeping the potion, just cancel the event
 						event.setCancelled(true);
-						return;
-					}
-					/*if (player.getGameMode() != org.bukkit.GameMode.CREATIVE) {
-						brew.remove(item);
-					}*/
-					if (P.use1_9) {
-						if (player.getGameMode() != GameMode.CREATIVE) {
-							// replace the potion with an empty potion to avoid effects
-							event.setItem(new ItemStack(Material.POTION));
-						} else {
-							// Dont replace the item when keeping the potion, just cancel the event
-							event.setCancelled(true);
-						}
 					}
 				}
-			} else if (BConfig.drainItems.containsKey(item.getType())) {
-				BPlayer bplayer = BPlayer.get(player);
-				if (bplayer != null) {
-					bplayer.drainByItem(player, item.getType());
-					if (BConfig.showStatusOnDrink) {
-						bplayer.showDrunkeness(player);
-					}
+			}
+		} else if (BConfig.drainItems.containsKey(item.getType())) {
+			BPlayer bplayer = BPlayer.get(player);
+			if (bplayer != null) {
+				bplayer.drainByItem(player, item.getType());
+				if (BConfig.showStatusOnDrink) {
+					bplayer.showDrunkeness(player);
 				}
 			}
 		}

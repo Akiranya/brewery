@@ -4,7 +4,7 @@ import com.dre.brewery.*;
 import com.dre.brewery.filedata.BConfig;
 import com.dre.brewery.lore.BrewLore;
 import com.dre.brewery.utility.TownyUtil;
-
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -12,11 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.*;
-import org.bukkit.inventory.BrewerInventory;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemFlag;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.PotionMeta;
 
 import java.util.HashSet;
@@ -36,7 +32,7 @@ public class InventoryListener implements Listener {
 		if (!P.use1_9) return;
 		HumanEntity player = event.getPlayer();
 		Inventory inv = event.getInventory();
-		if (player == null || !(inv instanceof BrewerInventory)) return;
+		if (!(inv instanceof BrewerInventory)) return;
 
 		P.p.debugLog("Starting brew inventory tracking");
 		trackedBrewmen.add(player.getUniqueId());
@@ -50,7 +46,7 @@ public class InventoryListener implements Listener {
 		if (!P.use1_9) return;
 		HumanEntity player = event.getPlayer();
 		Inventory inv = event.getInventory();
-		if (player == null || !(inv instanceof BrewerInventory)) return;
+		if (!(inv instanceof BrewerInventory)) return;
 
 		P.p.debugLog("Stopping brew inventory tracking");
 		trackedBrewmen.remove(player.getUniqueId());
@@ -69,34 +65,43 @@ public class InventoryListener implements Listener {
 	 * Clicking can either start or stop the new brew distillation tracking.
 	 * <p>Note that server restart will halt any ongoing brewing processes and
 	 * they will _not_ restart until a new click event.
-	 */
-	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void onBrewerClick(InventoryClickEvent event) {
-		if (!P.use1_9) return;
+     */
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onBrewerClick(InventoryClickEvent event) {
+        if (!P.use1_9) return;
 
-		HumanEntity player = event.getWhoClicked();
-		Inventory inv = event.getInventory();
-		if (player == null || !(inv instanceof BrewerInventory)) return;
+        HumanEntity player = event.getWhoClicked();
+        Inventory inv = event.getInventory();
+        if (!(inv instanceof BrewerInventory)) return;
 
-		UUID puid = player.getUniqueId();
-		if (!trackedBrewmen.contains(puid)) return;
+        UUID puid = player.getUniqueId();
+        if (!trackedBrewmen.contains(puid)) return;
 
-		if (InventoryType.BREWING != inv.getType()) return;
-		if (event.getAction() == InventoryAction.NOTHING) return; // Ignore clicks that do nothing
+        if (InventoryType.BREWING != inv.getType()) return;
+        if (event.getAction() == InventoryAction.NOTHING)
+            return; // Ignore clicks that do nothing
 
-		if(!TownyUtil.isInsideTown(event.getClickedInventory().getLocation())) return;
-		if(!TownyUtil.isInsideTown(event.getClickedInventory().getLocation(),(Player) event.getWhoClicked())) {
-			P.p.msg((Player) event.getWhoClicked(), P.p.languageReader.get("Towny_ForeignBrewer"));
-			event.setCancelled(true);
-			return;
+		// Towny integration starts
+		if (BConfig.useTowny) {
+			Inventory clickedInventory = event.getClickedInventory();
+			if (clickedInventory == null) return;
+			Location location = clickedInventory.getLocation();
+			if (location == null) return;
+			if (!TownyUtil.canSwitch(location, (Player) event.getWhoClicked())) {
+				P.p.msg(event.getWhoClicked(), P.p.languageReader.get("Towny_ForeignBrewer"));
+				event.setCancelled(true);
+				return;
+			}
 		}
-		
-		BDistiller.distillerClick(event);
-	}
+		// Towny integration ends
+
+        BDistiller.distillerClick(event);
+    }
 
 	@EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
 	public void onBrew(BrewEvent event) {
-		if(!TownyUtil.isInsideTown(event.getBlock().getLocation())) return;
+		if (TownyUtil.isInsideTown(event.getBlock().getLocation())) return;
+
 		if (P.use1_9) {
 			if (BDistiller.hasBrew(event.getContents(), BDistiller.getDistillContents(event.getContents())) != 0) {
 				event.setCancelled(true);
@@ -188,7 +193,7 @@ public class InventoryListener implements Listener {
 		if (!P.use1_14) return;
 		if (event.getInventory().getType() != InventoryType.BARREL) return;
 		if (!MCBarrel.enableAging) return;
-		
+
 		Inventory inv = event.getInventory();
 		for (MCBarrel barrel : MCBarrel.openBarrels) {
 			if (barrel.getInventory().equals(inv)) {
@@ -253,13 +258,17 @@ public class InventoryListener implements Listener {
 
 		// Check for MC Barrel
 		if (event.getInventory().getType() == InventoryType.BARREL) {
-			if(!TownyUtil.isInsideTown(event.getInventory().getLocation())) return;
-			if(!TownyUtil.isInsideTown(event.getInventory().getLocation(),(Player)event.getPlayer())) {
+			Inventory inv = event.getInventory();
+
+			// Towny integration starts
+			Location invLoc = inv.getLocation();
+			if (BConfig.useTowny && invLoc != null && !TownyUtil.canSwitch(invLoc, (Player) event.getPlayer())) {
 				P.p.msg(event.getPlayer(), P.p.languageReader.get("Towny_ForeignBarrel"));
 				event.setCancelled(true);
 				return;
 			}
-			Inventory inv = event.getInventory();
+			// Towny integration ends
+
 			for (MCBarrel barrel : MCBarrel.openBarrels) {
 				if (barrel.getInventory().equals(inv)) {
 					barrel.open();

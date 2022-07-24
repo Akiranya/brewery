@@ -1,17 +1,12 @@
 package com.dre.brewery.listeners;
 
-import com.dre.brewery.BPlayer;
-import com.dre.brewery.BSealer;
-import com.dre.brewery.Barrel;
-import com.dre.brewery.DistortChat;
-import com.dre.brewery.P;
+import com.dre.brewery.*;
 import com.dre.brewery.api.events.barrel.BarrelDestroyEvent;
 import com.dre.brewery.filedata.BConfig;
 import com.dre.brewery.filedata.BData;
 import com.dre.brewery.integration.barrel.BlocklockerBarrel;
 import com.dre.brewery.utility.BUtil;
 import com.dre.brewery.utility.TownyUtil;
-
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -36,13 +31,16 @@ public class BlockListener implements Listener {
 				P.p.msg(player, "§cCurrently loading Data");
 				return;
 			}
-			if(!TownyUtil.isInsideTown(event.getBlock().getLocation(), player)) {
+
+			// Towny integration starts
+			if (BConfig.useTowny && !TownyUtil.canBuild(event.getBlock().getLocation(), player)) {
 				P.p.msg(player, P.p.languageReader.get("Towny_MakeBarrelOutsideOfTown"));
 				return;
 			}
-			if ( Barrel.create(event.getBlock(), player)) {
+			// Towny integration ends
+
+			if (Barrel.create(event.getBlock(), player)) {
 				P.p.msg(player, P.p.languageReader.get("Player_BarrelCreated"));
-				return;
 			}
 		}
 	}

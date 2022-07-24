@@ -7,7 +7,6 @@ import com.dre.brewery.recipe.RecipeItem;
 import com.dre.brewery.utility.BUtil;
 import com.dre.brewery.utility.LegacyUtil;
 import com.dre.brewery.utility.TownyUtil;
-
 import com.dre.brewery.utility.Tuple;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -133,10 +132,13 @@ public class BCauldron {
 	public static boolean ingredientAdd(Block block, ItemStack ingredient, Player player) {
 		// if not empty
 		if (LegacyUtil.getFillLevel(block) != EMPTY) {
-			if(!TownyUtil.isInsideTown(block.getLocation(),player)) {
+
+			// Towny integration starts
+			if (BConfig.useTowny && !TownyUtil.canSwitch(block.getLocation(), player)) {
 				P.p.msg(player, P.p.languageReader.get("Towny_BrewingInForeignTown"));
 				return false;
 			}
+			// Towny integration ends
 
 			if (!BCauldronRecipe.acceptedMaterials.contains(ingredient.getType()) && !ingredient.hasItemMeta()) {
 				// Extremely fast way to check for most items
@@ -390,14 +392,17 @@ public class BCauldron {
 		Block clickedBlock = event.getClickedBlock();
 		assert clickedBlock != null;
 
-		if (materialInHand == null || materialInHand == Material.AIR || materialInHand == Material.BUCKET) {
+		if (materialInHand == Material.AIR || materialInHand == Material.BUCKET) {
 			return;
 		}
-		if(!TownyUtil.isInsideTown(clickedBlock.getLocation())) return;
-		if(!TownyUtil.isInsideTown(clickedBlock.getLocation(), player)){
+
+		// Towny integration starts
+		if (BConfig.useTowny && !TownyUtil.canSwitch(clickedBlock.getLocation(), player)) {
 			P.p.msg(player, P.p.languageReader.get("Towny_TakeBrewFromForeignTown"));
 			return;
 		}
+		// Towny integration ends
+
 		if (materialInHand == LegacyUtil.CLOCK) {
 			printTime(player, clickedBlock);
 			return;
@@ -456,8 +461,7 @@ public class BCauldron {
 				} else if (event.getHand() == EquipmentSlot.OFF_HAND) {
 					if (!plInteracted.remove(player.getUniqueId())) {
 						item = player.getInventory().getItemInMainHand();
-						if (item != null && item.getType() != Material.AIR) {
-							materialInHand = item.getType();
+						if (item.getType() != Material.AIR) {
 							handSwap = true;
 						} else {
 							item = BConfig.useOffhandForCauldron ? event.getItem() : null;

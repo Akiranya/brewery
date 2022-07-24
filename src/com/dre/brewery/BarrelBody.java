@@ -1,10 +1,10 @@
 package com.dre.brewery;
 
+import com.dre.brewery.filedata.BConfig;
 import com.dre.brewery.utility.BUtil;
 import com.dre.brewery.utility.BoundingBox;
 import com.dre.brewery.utility.LegacyUtil;
 import com.dre.brewery.utility.TownyUtil;
-
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.ConfigurationSection;
@@ -301,13 +301,15 @@ public class BarrelBody {
 			while (x <= endX) {
 				while (z <= endZ) {
 					Block block = spigot.getRelative(x, y, z);
-					
-					if(!TownyUtil.isInsideTown(block.getLocation(), player)){
-						if(player != null)
-							P.p.msg(player, P.p.languageReader.get("Towny_BarrelOverreachingBorders"));
-						return block;
-					}
-					
+
+                    // Towny integration starts
+                    if (BConfig.useTowny && !TownyUtil.isInsideTown(block.getLocation())) {
+                        if (player != null)
+                            P.p.msg(player, P.p.languageReader.get("Towny_BarrelOverreachingBorders"));
+                        return block;
+                    }
+					// Towny integration ends
+
 					type = block.getType();
 
 					if (LegacyUtil.isWoodStairs(type)) {
@@ -379,11 +381,13 @@ public class BarrelBody {
 				while (z <= endZ) {
 					Block block = spigot.getRelative(x, y, z);
 
-					if(!TownyUtil.isInsideTown(block.getLocation(), player)){
-						if(player != null)
-							P.p.msg(player, P.p.languageReader.get("Towny_BarrelOverreachingBorders"));
-						return block;
-					}
+                    // Towny integration starts
+                    if (BConfig.useTowny && !TownyUtil.isInsideTown(block.getLocation())) {
+                        if (player != null)
+                            P.p.msg(player, P.p.languageReader.get("Towny_BarrelOverreachingBorders"));
+                        return block;
+                    }
+                    // Towny integration ends
 
 					type = block.getType();
 					if (direction == 1 || direction == 2) {
