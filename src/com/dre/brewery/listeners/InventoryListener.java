@@ -261,12 +261,12 @@ public class InventoryListener implements Listener {
 			Inventory inv = event.getInventory();
 
 			// Towny integration starts
-			Location invLoc = inv.getLocation();
-			if (BConfig.useTowny && invLoc != null && !TownyUtil.canSwitch(invLoc, (Player) event.getPlayer())) {
-				P.p.msg(event.getPlayer(), P.p.languageReader.get("Towny_ForeignBarrel"));
-				event.setCancelled(true);
-				return;
-			}
+//			Location invLoc = inv.getLocation();
+//			if (BConfig.useTowny && invLoc != null && !TownyUtil.canSwitch(invLoc, (Player) event.getPlayer())) {
+//				P.p.msg(event.getPlayer(), P.p.languageReader.get("Towny_ForeignBarrel"));
+//				event.setCancelled(true);
+//				return;
+//			}
 			// Towny integration ends
 
 			for (MCBarrel barrel : MCBarrel.openBarrels) {
