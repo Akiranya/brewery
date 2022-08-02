@@ -33,7 +33,7 @@ public class BlockListener implements Listener {
 			}
 
 			// Towny integration starts
-			if (BConfig.useTowny && !TownyUtil.canBuild(event.getBlock().getLocation(), player)) {
+			if (BConfig.useTowny && !TownyUtil.canBuild(event.getBlock().getLocation(), player, true)) {
 				P.p.msg(player, P.p.languageReader.get("Towny_MakeBarrelOutsideOfTown"));
 				return;
 			}

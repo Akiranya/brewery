@@ -87,7 +87,7 @@ public class InventoryListener implements Listener {
 			if (clickedInventory == null) return;
 			Location location = clickedInventory.getLocation();
 			if (location == null) return;
-			if (!TownyUtil.canSwitch(location, (Player) event.getWhoClicked())) {
+			if (!TownyUtil.canSwitch(location, (Player) event.getWhoClicked(), false)) {
 				P.p.msg(event.getWhoClicked(), P.p.languageReader.get("Towny_ForeignBrewer"));
 				event.setCancelled(true);
 				return;

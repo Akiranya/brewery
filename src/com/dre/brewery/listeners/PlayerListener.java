@@ -61,7 +61,7 @@ public class PlayerListener implements Listener {
 			event.setCancelled(true);
 
 			// Towny integration starts
-			if (BConfig.useTowny && !TownyUtil.canSwitch(clickedBlock.getLocation(), player)) {
+			if (BConfig.useTowny && !TownyUtil.canSwitch(clickedBlock.getLocation(), player, true)) {
 				P.p.msg(player, P.p.languageReader.get("Towny_ForeignSealingTable"));
 				return;
 			}
@@ -123,7 +123,7 @@ public class PlayerListener implements Listener {
 			event.setCancelled(true);
 
 			// Towny integration starts
-			if (BConfig.useTowny && !TownyUtil.canSwitch(clickedBlock.getLocation(), player)) {
+			if (BConfig.useTowny && !TownyUtil.canSwitch(clickedBlock.getLocation(), player, true)) {
 				P.p.msg(player, P.p.languageReader.get("Towny_ForeignBarrel"));
 				return;
 			}

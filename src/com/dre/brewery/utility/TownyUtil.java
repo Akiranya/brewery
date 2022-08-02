@@ -32,11 +32,11 @@ public class TownyUtil {
      * @param player   the player who initiates this action
      * @return true if the player is permitted, otherwise false
      */
-    public static boolean canBuild(@NotNull Location location, @NotNull Player player) {
-        if (isInsideTown(location)) {
+    public static boolean canBuild(@NotNull Location location, @NotNull Player player, boolean checkInsideTown) {
+        if (checkInsideTown && isInsideTown(location)) {
             return PlayerCacheUtil.getCachePermission(player, location, location.getBlock().getType(), TownyPermission.ActionType.BUILD);
         }
-        return player.hasPermission("brewery.admin");
+        return player.hasPermission("brewery.admin") || PlayerCacheUtil.getCachePermission(player, location, location.getBlock().getType(), TownyPermission.ActionType.BUILD);
     }
 
     /**
@@ -48,11 +48,11 @@ public class TownyUtil {
      * @param player   the player who initiates this action
      * @return true if the player is permitted, otherwise false
      */
-    public static boolean canDestroy(@NotNull Location location, @NotNull Player player) {
-        if (isInsideTown(location)) {
+    public static boolean canDestroy(@NotNull Location location, @NotNull Player player, boolean checkInsideTown) {
+        if (checkInsideTown && isInsideTown(location)) {
             return PlayerCacheUtil.getCachePermission(player, location, location.getBlock().getType(), TownyPermission.ActionType.DESTROY);
         }
-        return player.hasPermission("brewery.admin");
+        return player.hasPermission("brewery.admin") || PlayerCacheUtil.getCachePermission(player, location, location.getBlock().getType(), TownyPermission.ActionType.DESTROY);
     }
 
     /**
@@ -64,11 +64,11 @@ public class TownyUtil {
      * @param player   the player who initiates this action
      * @return true if the player is permitted, otherwise false
      */
-    public static boolean canUseItem(@NotNull Location location, @NotNull Player player) {
-        if (isInsideTown(location)) {
+    public static boolean canUseItem(@NotNull Location location, @NotNull Player player, boolean checkInsideTown) {
+        if (checkInsideTown && isInsideTown(location)) {
             return PlayerCacheUtil.getCachePermission(player, location, location.getBlock().getType(), TownyPermission.ActionType.ITEM_USE);
         }
-        return player.hasPermission("brewery.admin");
+        return player.hasPermission("brewery.admin") || PlayerCacheUtil.getCachePermission(player, location, location.getBlock().getType(), TownyPermission.ActionType.DESTROY);
     }
 
     /**
@@ -80,11 +80,11 @@ public class TownyUtil {
      * @param player   the player who initiates this action
      * @return true if the player is permitted, otherwise false
      */
-    public static boolean canSwitch(@NotNull Location location, @NotNull Player player) {
-        if (isInsideTown(location)) {
+    public static boolean canSwitch(@NotNull Location location, @NotNull Player player, boolean checkInsideTown) {
+        if (checkInsideTown && isInsideTown(location)) {
             return PlayerCacheUtil.getCachePermission(player, location, location.getBlock().getType(), TownyPermission.ActionType.SWITCH);
         }
-        return player.hasPermission("brewery.admin");
+        return player.hasPermission("brewery.admin") || PlayerCacheUtil.getCachePermission(player, location, location.getBlock().getType(), TownyPermission.ActionType.SWITCH);
     }
 
 }

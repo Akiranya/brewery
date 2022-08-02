@@ -134,7 +134,7 @@ public class BCauldron {
 		if (LegacyUtil.getFillLevel(block) != EMPTY) {
 
 			// Towny integration starts
-			if (BConfig.useTowny && !TownyUtil.canSwitch(block.getLocation(), player)) {
+			if (BConfig.useTowny && !TownyUtil.canSwitch(block.getLocation(), player, true)) {
 				P.p.msg(player, P.p.languageReader.get("Towny_BrewingInForeignTown"));
 				return false;
 			}
@@ -397,7 +397,7 @@ public class BCauldron {
 		}
 
 		// Towny integration starts
-		if (BConfig.useTowny && !TownyUtil.canSwitch(clickedBlock.getLocation(), player)) {
+		if (BConfig.useTowny && !TownyUtil.canSwitch(clickedBlock.getLocation(), player, true)) {
 			P.p.msg(player, P.p.languageReader.get("Towny_TakeBrewFromForeignTown"));
 			return;
 		}
