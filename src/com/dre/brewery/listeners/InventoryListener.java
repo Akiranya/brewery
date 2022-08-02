@@ -81,6 +81,20 @@ public class InventoryListener implements Listener {
         if (event.getAction() == InventoryAction.NOTHING)
             return; // Ignore clicks that do nothing
 
+		// Towny integration starts
+		if (BConfig.useTowny) {
+			Inventory clickedInventory = event.getClickedInventory();
+			if (clickedInventory == null) return;
+			Location location = clickedInventory.getLocation();
+			if (location == null) return;
+			if (!TownyUtil.canSwitch(location, (Player) event.getWhoClicked(), false)) {
+				P.p.msg(event.getWhoClicked(), P.p.languageReader.get("Towny_ForeignBrewer"));
+				event.setCancelled(true);
+				return;
+			}
+		}
+		// Towny integration ends
+
         BDistiller.distillerClick(event);
     }
 
