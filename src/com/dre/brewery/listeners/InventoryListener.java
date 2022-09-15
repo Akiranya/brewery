@@ -106,7 +106,7 @@ public class InventoryListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBrew(BrewEvent event) {
-        if (TownyUtil.isInsideTown(event.getBlock().getLocation())) return;
+        if (BConfig.useTowny && TownyUtil.isInsideTown(event.getBlock().getLocation())) return;
 
         if (P.use1_9) {
             if (BDistiller.hasBrew(event.getContents(), BDistiller.getDistillContents(event.getContents())) != 0) {
