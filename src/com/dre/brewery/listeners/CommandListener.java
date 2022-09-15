@@ -551,7 +551,7 @@ public class CommandListener implements CommandExecutor {
 		P.p.msg(sender, "Drunk Players: " + BPlayer.numDrunkPlayers());
 		P.p.msg(sender, "Brews created: " + P.p.stats.brewsCreated);
 		P.p.msg(sender, "Barrels built: " + Barrel.barrels.size());
-		P.p.msg(sender, "Cauldrons boiling: " + BCauldron.bcauldrons.size());
+		P.p.msg(sender, "Cauldrons boiling: " + BCauldron.bCauldrons.size());
 		P.p.msg(sender, "Number of Recipes: " + BRecipe.getAllRecipes().size());
 		P.p.msg(sender, "Wakeups: " + Wakeup.wakeups.size());
 	}

@@ -29,7 +29,7 @@ public class PlayerListener implements Listener {
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		Block clickedBlock = event.getClickedBlock();
 		if (clickedBlock == null) return;
-		
+
 		if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
 
 		Player player = event.getPlayer();
@@ -99,7 +99,6 @@ public class PlayerListener implements Listener {
 		if (P.use1_9 && event.getHand() != EquipmentSlot.HAND) {
 			return;
 		}
-		
 
 		// -- Access a Barrel --
 		Barrel barrel = null;
@@ -119,7 +118,7 @@ public class PlayerListener implements Listener {
 		}
 
 		if (barrel != null) {
-			
+
 			event.setCancelled(true);
 
 			// Towny integration starts
@@ -194,9 +193,6 @@ public class PlayerListener implements Listener {
 					event.setCancelled(true);
 					return;
 				}
-				/*if (player.getGameMode() != org.bukkit.GameMode.CREATIVE) {
-					brew.remove(item);
-				}*/
 				if (P.use1_9) {
 					if (player.getGameMode() != GameMode.CREATIVE) {
 						// replace the potion with an empty potion to avoid effects
@@ -218,7 +214,7 @@ public class PlayerListener implements Listener {
 		}
 	}
 
-	// Player has died! Decrease Drunkeness by 20
+	// player has died! Decrease drunkenness by 20
 	@EventHandler
 	public void onPlayerRespawn(PlayerRespawnEvent event) {
 		BPlayer bPlayer = BPlayer.get(event.getPlayer());

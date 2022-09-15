@@ -1,23 +1,23 @@
-/**
- *
- *     Brewery Minecraft-Plugin for an alternate Brewing Process
- *     Copyright (C) 2021 Milan Albrecht
- *
- *     This file is part of Brewery.
- *
- *     Brewery is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     Brewery is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with Brewery.  If not, see <http://www.gnu.org/licenses/>.
- *
+/*
+
+      Brewery Minecraft-Plugin for an alternate Brewing Process
+      Copyright (C) 2021 Milan Albrecht
+
+      This file is part of Brewery.
+
+      Brewery is free software: you can redistribute it and/or modify
+      it under the terms of the GNU General Public License as published by
+      the Free Software Foundation, either version 3 of the License, or
+      (at your option) any later version.
+
+      Brewery is distributed in the hope that it will be useful,
+      but WITHOUT ANY WARRANTY; without even the implied warranty of
+      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+      GNU General Public License for more details.
+
+      You should have received a copy of the GNU General Public License
+      along with Brewery.  If not, see <http://www.gnu.org/licenses/>.
+
  */
 
 
@@ -50,7 +50,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -94,7 +93,7 @@ public class P extends JavaPlugin {
 		use1_13 = !v.matches("(^|.*[^.\\d])1\\.1[0-2]([^\\d].*|$)") && !v.matches("(^|.*[^.\\d])1\\.[0-9]([^\\d].*|$)");
 		use1_14 = !v.matches("(^|.*[^.\\d])1\\.1[0-3]([^\\d].*|$)") && !v.matches("(^|.*[^.\\d])1\\.[0-9]([^\\d].*|$)");
 
-		//MC 1.13 uses a different NBT API than the newer versions..
+		// MC 1.13 uses a different NBT API than the newer versions.
 		// We decide here which to use, the new or the old or none at all
 		if (LegacyUtil.initNbt()) {
 			useNBT = true;
@@ -102,7 +101,7 @@ public class P extends JavaPlugin {
 
 		if (use1_14) {
 			// Campfires are weird
-			// Initialize once now so it doesn't lag later when we check for campfires under Cauldrons
+			// Initialize once now, so it doesn't lag later when we check for campfires under Cauldrons
 			getServer().createBlockData(Material.CAMPFIRE);
 		}
 
@@ -188,7 +187,7 @@ public class P extends JavaPlugin {
 		// Disable listeners
 		HandlerList.unregisterAll(this);
 
-		// Stop shedulers
+		// Stop schedulers
 		getServer().getScheduler().cancelTasks(this);
 
 		if (p == null) {
@@ -366,11 +365,9 @@ public class P extends JavaPlugin {
 		}
 	}
 
-
 	public String color(String msg) {
 		return BUtil.color(msg);
 	}
-
 
 	// Runnables
 
@@ -388,21 +385,14 @@ public class P extends JavaPlugin {
 		public void run() {
 			long t1 = System.nanoTime();
 			BConfig.reloader = null;
-			Iterator<BCauldron> iter = BCauldron.bcauldrons.values().iterator();
-			while (iter.hasNext()) {
-				// runs every min to update cooking time
-				if (!iter.next().onUpdate()) {
-					iter.remove();
-				}
-			}
+			BCauldron.bCauldrons.values().removeIf(bCauldron -> !bCauldron.onUpdate()); // runs every min to update cooking time
 			long t2 = System.nanoTime();
-			Barrel.onUpdate();// runs every min to check and update ageing time
+			Barrel.onUpdate(); // runs every min to check and update ageing time
 			long t3 = System.nanoTime();
 			if (use1_14) MCBarrel.onUpdate();
 			if (BConfig.useBlocklocker) BlocklockerBarrel.clearBarrelSign();
 			long t4 = System.nanoTime();
-			BPlayer.onUpdate();// updates players drunkeness
-
+			BPlayer.onUpdate(); // updates players drunkenness
 			long t5 = System.nanoTime();
 			DataSave.autoSave();
 			long t6 = System.nanoTime();
@@ -414,10 +404,9 @@ public class P extends JavaPlugin {
 				" | t4: " + (t5 - t4) / 1000000.0 + "ms" +
 				" | t5: " + (t6 - t5) / 1000000.0 + "ms" );
 		}
-
 	}
 
-	public class CauldronParticles implements Runnable {
+	public static class CauldronParticles implements Runnable {
 		@Override
 		public void run() {
 			if (!BConfig.enableCauldronParticles) return;

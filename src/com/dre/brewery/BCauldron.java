@@ -25,18 +25,19 @@ import java.util.*;
 
 public class BCauldron {
 	public static final byte EMPTY = 0, SOME = 1, FULL = 2;
-	public static final int PARTICLEPAUSE = 15;
+	public static final int PARTICLE_PAUSE = 15;
 	public static Random particleRandom = new Random();
-	private static Set<UUID> plInteracted = new HashSet<>(); // Interact Event helper
-	public static Map<Block, BCauldron> bcauldrons = new HashMap<>(); // All active cauldrons. Mapped to their block for fast retrieve
+	private final static Set<UUID> plInteracted = new HashSet<>(); // Interact Event helper
+	public static Map<Block, BCauldron> bCauldrons = new HashMap<>(); // All active cauldrons. Mapped to their block for fast retrieve
 
 	private BIngredients ingredients = new BIngredients();
 	private final Block block;
 	private int state = 0;
 	private boolean changed = false; // Not really needed anymore
+	@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 	private Optional<BCauldronRecipe> particleRecipe; // null if we haven't checked, empty if there is none
 	private Color particleColor;
-	private Location particleLocation;
+	private final Location particleLocation;
 
 	public BCauldron(Block block) {
 		this.block = block;
@@ -124,7 +125,7 @@ public class BCauldron {
 	// get cauldron by Block
 	@Nullable
 	public static BCauldron get(Block block) {
-		return bcauldrons.get(block);
+		return bCauldrons.get(block);
 	}
 
 	// get cauldron from block and add given ingredient
@@ -153,7 +154,7 @@ public class BCauldron {
 			BCauldron bcauldron = get(block);
 			if (bcauldron == null) {
 				bcauldron = new BCauldron(block);
-				BCauldron.bcauldrons.put(block, bcauldron);
+				BCauldron.bCauldrons.put(block, bcauldron);
 			}
 
 			IngedientAddEvent event = new IngedientAddEvent(player, block, bcauldron, ingredient.clone(), rItem);
@@ -181,12 +182,12 @@ public class BCauldron {
 		if (P.use1_13) {
 			BlockData data = block.getBlockData();
 			if (!(data instanceof Levelled)) {
-				bcauldrons.remove(block);
+				bCauldrons.remove(block);
 				return false;
 			}
 			Levelled cauldron = ((Levelled) data);
 			if (cauldron.getLevel() <= 0) {
-				bcauldrons.remove(block);
+				bCauldrons.remove(block);
 				return false;
 			}
 
@@ -194,7 +195,7 @@ public class BCauldron {
 			if (LegacyUtil.WATER_CAULDRON != null && cauldron.getLevel() == 1) {
 				// Empty Cauldron
 				block.setType(Material.CAULDRON);
-				bcauldrons.remove(block);
+				bCauldrons.remove(block);
 			} else {
 				cauldron.setLevel(cauldron.getLevel() - 1);
 
@@ -204,7 +205,7 @@ public class BCauldron {
 				block.setBlockData(data);
 
 				if (cauldron.getLevel() <= 0) {
-					bcauldrons.remove(block);
+					bCauldrons.remove(block);
 				} else {
 					changed = true;
 				}
@@ -216,14 +217,14 @@ public class BCauldron {
 			if (data > 3) {
 				data = 3;
 			} else if (data <= 0) {
-				bcauldrons.remove(block);
+				bCauldrons.remove(block);
 				return false;
 			}
 			data -= 1;
 			LegacyUtil.setData(block, data);
 
 			if (data == 0) {
-				bcauldrons.remove(block);
+				bCauldrons.remove(block);
 			} else {
 				changed = true;
 			}
@@ -231,8 +232,7 @@ public class BCauldron {
 		if (P.use1_9) {
 			block.getWorld().playSound(block.getLocation(), Sound.ITEM_BOTTLE_FILL, 1f, 1f);
 		}
-		// Bukkit Bug, inventory not updating while in event so this
-		// will delay the give
+		// Bukkit Bug, inventory not updating while in event so this will delay the give
 		// but could also just use deprecated updateInventory()
 		giveItem(player, potion);
 		// player.getInventory().addItem(potion);
@@ -373,12 +373,12 @@ public class BCauldron {
 
 	public static void processCookEffects() {
 		if (!BConfig.enableCauldronParticles) return;
-		if (bcauldrons.isEmpty()) {
+		if (bCauldrons.isEmpty()) {
 			return;
 		}
-		final float chance = 1f / PARTICLEPAUSE;
+		final float chance = 1f / PARTICLE_PAUSE;
 
-		for (BCauldron cauldron : bcauldrons.values()) {
+		for (BCauldron cauldron : bCauldrons.values()) {
 			if (particleRandom.nextFloat() < chance) {
 				cauldron.cookEffect();
 			}
@@ -503,7 +503,7 @@ public class BCauldron {
 	 * Recalculate the Cauldron Particle Recipe
 	 */
 	public static void reload() {
-		for (BCauldron cauldron : bcauldrons.values()) {
+		for (BCauldron cauldron : bCauldrons.values()) {
 			cauldron.particleRecipe = null;
 			cauldron.particleColor = null;
 			if (BConfig.enableCauldronParticles) {
@@ -518,20 +518,20 @@ public class BCauldron {
 	 * reset to normal cauldron
  	 */
 	public static boolean remove(Block block) {
-		return bcauldrons.remove(block) != null;
+		return bCauldrons.remove(block) != null;
 	}
 
 	/**
 	 * Are any Cauldrons in that World
 	 */
 	public static boolean hasDataInWorld(World world) {
-		return bcauldrons.keySet().stream().anyMatch(block -> block.getWorld().equals(world));
+		return bCauldrons.keySet().stream().anyMatch(block -> block.getWorld().equals(world));
 	}
 
 	// unloads cauldrons that are in a unloading world
 	// as they were written to file just before, this is safe to do
 	public static void onUnload(World world) {
-		bcauldrons.keySet().removeIf(block -> block.getWorld().equals(world));
+		bCauldrons.keySet().removeIf(block -> block.getWorld().equals(world));
 	}
 
 	/**
@@ -539,22 +539,22 @@ public class BCauldron {
 	 */
 	public static void unloadWorlds() {
 		List<World> worlds = P.p.getServer().getWorlds();
-		bcauldrons.keySet().removeIf(block -> !worlds.contains(block.getWorld()));
+		bCauldrons.keySet().removeIf(block -> !worlds.contains(block.getWorld()));
 	}
 
 	public static void save(ConfigurationSection config, ConfigurationSection oldData) {
 		BUtil.createWorldSections(config);
 
-		if (!bcauldrons.isEmpty()) {
+		if (!bCauldrons.isEmpty()) {
 			int id = 0;
-			for (BCauldron cauldron : bcauldrons.values()) {
+			for (BCauldron cauldron : bCauldrons.values()) {
 				String worldName = cauldron.block.getWorld().getName();
 				String prefix;
 
 				if (worldName.startsWith("DXL_")) {
 					prefix = BUtil.getDxlName(worldName) + "." + id;
 				} else {
-					prefix = cauldron.block.getWorld().getUID().toString() + "." + id;
+					prefix = cauldron.block.getWorld().getUID() + "." + id;
 				}
 
 				config.set(prefix + ".block", cauldron.block.getX() + "/" + cauldron.block.getY() + "/" + cauldron.block.getZ());

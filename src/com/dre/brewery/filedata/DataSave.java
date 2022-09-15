@@ -94,7 +94,7 @@ public class DataSave extends BukkitRunnable {
 				BPlayer.save(data.createSection("Player"));
 			}
 
-			if (!BCauldron.bcauldrons.isEmpty() || oldWorldData.contains("BCauldron")) {
+			if (!BCauldron.bCauldrons.isEmpty() || oldWorldData.contains("BCauldron")) {
 				BCauldron.save(worldData.createSection("BCauldron"), oldWorldData.getConfigurationSection("BCauldron"));
 			}
 

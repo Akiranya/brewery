@@ -48,7 +48,7 @@ public class Stats {
 			metrics.addCustomChart(new SingleLineChart("drunk_players", BPlayer::numDrunkPlayers));
 			metrics.addCustomChart(new SingleLineChart("brews_in_existence", () -> brewsCreated));
 			metrics.addCustomChart(new SingleLineChart("barrels_built", Barrel.barrels::size));
-			metrics.addCustomChart(new SingleLineChart("cauldrons_boiling", BCauldron.bcauldrons::size));
+			metrics.addCustomChart(new SingleLineChart("cauldrons_boiling", BCauldron.bCauldrons::size));
 			metrics.addCustomChart(new AdvancedPie("brew_quality", () -> {
 				Map<String, Integer> map = new HashMap<>(8);
 				map.put("excellent", exc);

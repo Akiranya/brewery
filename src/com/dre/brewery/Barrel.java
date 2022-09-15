@@ -46,14 +46,14 @@ public class Barrel implements InventoryHolder {
 	private Inventory inventory;
 	private float time;
 
-	public Barrel(Block spigot, byte signoffset) {
+	public Barrel(Block spigot, byte signOffset) {
 		this.spigot = spigot;
 		if (isLarge()) {
 			inventory = P.p.getServer().createInventory(this, 27, P.p.languageReader.get("Etc_Barrel"));
 		} else {
 			inventory = P.p.getServer().createInventory(this, 9, P.p.languageReader.get("Etc_Barrel"));
 		}
-		body = new BarrelBody(this, signoffset);
+		body = new BarrelBody(this, signOffset);
 	}
 
 	/**
@@ -89,7 +89,7 @@ public class Barrel implements InventoryHolder {
 
 	public static void onUpdate() {
 		for (Barrel barrel : barrels) {
-			// Minecraft day is 20 min, so add 1/20 to the time every minute
+			// Minecraft Day is 20 min, so add 1/20 to the time every minute
 			barrel.time += (1.0 / 20.0);
 		}
 		int numBarrels = barrels.size();
@@ -168,13 +168,12 @@ public class Barrel implements InventoryHolder {
 							}
 						}
 						loadTime = System.nanoTime() - loadTime;
-						float ftime = (float) (loadTime / 1000000.0);
-						P.p.debugLog("opening Barrel with potions (" + ftime + "ms)");
+						P.p.debugLog("opening Barrel with potions (" + (float) (loadTime / 1000000.0) + "ms)");
 					}
 				}
 			}
 		}
-		// reset barreltime, potions have new age
+		// reset barrelTime, potions have new age
 		time = 0;
 
 		if (BConfig.useLB) {
@@ -278,21 +277,21 @@ public class Barrel implements InventoryHolder {
 	 */
 	@Nullable
 	public static Barrel getBySpigot(Block sign) {
-		// convert spigot if neccessary
+		// convert spigot if necessary
 		Block spigot = BarrelBody.getSpigotOfSign(sign);
 
-		byte signoffset = 0;
+		byte signOffset = 0;
 		if (!spigot.equals(sign)) {
-			signoffset = (byte) (sign.getY() - spigot.getY());
+			signOffset = (byte) (sign.getY() - spigot.getY());
 		}
 
 		int i = 0;
 		for (Barrel barrel : barrels) {
-			if (barrel.body.isSignOfBarrel(signoffset)) {
+			if (barrel.body.isSignOfBarrel(signOffset)) {
 				if (barrel.spigot.equals(spigot)) {
-					if (barrel.body.getSignoffset() == 0 && signoffset != 0) {
+					if (barrel.body.getSignoffset() == 0 && signOffset != 0) {
 						// Barrel has no signOffset even though we clicked a sign, may be old
-						barrel.body.setSignoffset(signoffset);
+						barrel.body.setSignoffset(signOffset);
 					}
 					moveMRU(i);
 					return barrel;
@@ -336,14 +335,14 @@ public class Barrel implements InventoryHolder {
 	public static boolean create(Block sign, Player player) {
 		Block spigot = BarrelBody.getSpigotOfSign(sign);
 
-		byte signoffset = 0;
+		byte signOffset = 0;
 		if (!spigot.equals(sign)) {
-			signoffset = (byte) (sign.getY() - spigot.getY());
+			signOffset = (byte) (sign.getY() - spigot.getY());
 		}
 
 		Barrel barrel = getBySpigot(spigot);
 		if (barrel == null) {
-			barrel = new Barrel(spigot, signoffset);
+			barrel = new Barrel(spigot, signOffset);
 			if (barrel.body.getBrokenBlock(true, player) == null) {
 				if (LegacyUtil.isSign(spigot.getType())) {
 					if (!player.hasPermission("brewery.createbarrel.small")) {
@@ -364,8 +363,8 @@ public class Barrel implements InventoryHolder {
 				}
 			}
 		} else {
-			if (barrel.body.getSignoffset() == 0 && signoffset != 0) {
-				barrel.body.setSignoffset(signoffset);
+			if (barrel.body.getSignoffset() == 0 && signOffset != 0) {
+				barrel.body.setSignoffset(signOffset);
 				return true;
 			}
 		}
@@ -477,14 +476,14 @@ public class Barrel implements InventoryHolder {
 	}
 
 	/**
-	 * unloads barrels that are in a unloading world
+	 * unloads barrels that are in an unloading world
 	 */
 	public static void onUnload(World world) {
 		barrels.removeIf(barrel -> barrel.spigot.getWorld().equals(world));
 	}
 
 	/**
-	 * Unload all Barrels that have a Block in a unloaded World
+	 * Unload all Barrels that have a Block in an unloaded World
 	 */
 	public static void unloadWorlds() {
 		List<World> worlds = P.p.getServer().getWorlds();
@@ -507,7 +506,7 @@ public class Barrel implements InventoryHolder {
 				if (worldName.startsWith("DXL_")) {
 					prefix = BUtil.getDxlName(worldName) + "." + id;
 				} else {
-					prefix = barrel.spigot.getWorld().getUID().toString() + "." + id;
+					prefix = barrel.spigot.getWorld().getUID() + "." + id;
 				}
 
 				// block: x/y/z
@@ -529,7 +528,7 @@ public class Barrel implements InventoryHolder {
 								}
 								invConfig = config.createSection(prefix + ".inv");
 							}
-							// ItemStacks are configurationSerializeable, makes them
+							// ItemStacks are ConfigurationSerializable, makes them
 							// really easy to save
 							invConfig.set(slot + "", item);
 						}
@@ -567,8 +566,8 @@ public class Barrel implements InventoryHolder {
 							// remove the barrel if it was destroyed
 							barrel.remove(broken, null, true);
 						} else {
-							// Dont check this barrel again, its enough to check it once after every restart (and when randomly chosen)
-							// as now this is only the backup if we dont register the barrel breaking,
+							// Don't check this barrel again, It's enough to check it once after every restart (and when randomly chosen)
+							// as now this is only the backup if we don't register the barrel breaking,
 							// for example when removing it with some world editor
 							barrel.checked = true;
 						}
