@@ -30,4 +30,5 @@ public class MMOItemsPluginItem extends PluginItem {
 			return false;
 		}
 	}
+
 }

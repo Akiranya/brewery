@@ -27,4 +27,5 @@ public class BreweryPluginItem extends PluginItem {
 		}
 		return false;
 	}
+
 }

@@ -12,18 +12,18 @@ public class ItemsAdderPluginItem extends PluginItem {
 // We're calling this as server start:
 // PluginItem.registerForConfig("itemsadder", ItemsAdderPluginItem::new);
 
-    @Override
-    public boolean matches(ItemStack item) {
-        if (BConfig.hasItemsAdder == null) {
-            BConfig.hasItemsAdder = P.p.getServer().getPluginManager().isPluginEnabled("ItemsAdder");
-        }
-        if (!BConfig.hasItemsAdder) return false;
-        CustomStack customStack = CustomStack.byItemStack(item);
-        if (customStack != null) {
-            return customStack.getNamespacedID().equalsIgnoreCase(getItemId());
-        } else {
-            return false;
-        }
-    }
+	@Override
+	public boolean matches(ItemStack item) {
+		if (BConfig.hasItemsAdder == null) {
+			BConfig.hasItemsAdder = P.p.getServer().getPluginManager().isPluginEnabled("ItemsAdder");
+		}
+		if (!BConfig.hasItemsAdder) return false;
+		CustomStack customStack = CustomStack.byItemStack(item);
+		if (customStack != null) {
+			return customStack.getNamespacedID().equalsIgnoreCase(getItemId());
+		} else {
+			return false;
+		}
+	}
 
 }
