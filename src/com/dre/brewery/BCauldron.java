@@ -248,7 +248,7 @@ public class BCauldron {
 		}
 		BCauldron bcauldron = get(block);
 		if (bcauldron != null) {
-			if (bcauldron.state > 1) {
+			if (bcauldron.state >= 1) {
 				P.p.msg(player, P.p.languageReader.get("Player_CauldronInfo1", "" + bcauldron.state));
 			} else {
 				P.p.msg(player, P.p.languageReader.get("Player_CauldronInfo2"));
