@@ -22,10 +22,13 @@ public class MMOItemsPluginItem extends PluginItem {
 
 		try {
 			NBTItem nbtItem = NBTItem.get(item);
-			return nbtItem.hasType() && nbtItem.getString("MMOITEMS_ITEM_ID").equalsIgnoreCase(getItemId());
+			if (!nbtItem.hasType()) return false;
+			String[] typeAndId = getItemId().split(":");
+			return nbtItem.getType().equalsIgnoreCase(typeAndId[0])
+					&& nbtItem.getString("MMOITEMS_ITEM_ID").equalsIgnoreCase(typeAndId[1]);
 		} catch (Throwable e) {
 			e.printStackTrace();
-			P.p.errorLog("Could not check MMOItems for Item ID");
+			P.p.errorLog("Could not check MMOItems for Item ID: " + getItemId());
 			BConfig.hasMMOItems = false;
 			return false;
 		}
