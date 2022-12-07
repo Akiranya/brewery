@@ -28,12 +28,16 @@ public class MCBarrel {
 	private final Inventory inv;
 	private final int invSize;
 
-
 	public MCBarrel(Inventory inv) {
 		this.inv = inv;
 		invSize = inv.getSize();
 	}
 
+	public static void onUpdate() {
+		if (enableAging) {
+			mcBarrelTime++;
+		}
+	}
 
 	// Now Opening this Barrel for a player
 	public void open() {
@@ -69,8 +73,8 @@ public class MCBarrel {
 					}
 					if (P.debug) {
 						loadTime = System.nanoTime() - loadTime;
-						float ftime = (float) (loadTime / 1000000.0);
-						P.p.debugLog("opening MC Barrel with potions (" + ftime + "ms)");
+						float fTime = (float) (loadTime / 1000000.0);
+						P.p.debugLog("Opening MC Barrel with potions (" + fTime + "ms)");
 					}
 				}
 			}
@@ -114,13 +118,6 @@ public class MCBarrel {
 		return inv;
 	}
 
-
-	public static void onUpdate() {
-		if (enableAging) {
-			mcBarrelTime++;
-		}
-	}
-
 	// Used to visually stop Players from placing more than 6 (configurable) brews in the MC Barrels.
 	// There are still methods to place more Brews in that would be too tedious to catch.
 	// This is only for direct visual Notification, the age routine above will never age more than 6 brews in any case.
@@ -140,7 +137,7 @@ public class MCBarrel {
 					if (Brew.isBrew(event.getCursor())) {
 						if (event.getAction() == InventoryAction.SWAP_WITH_CURSOR && event.getCurrentItem() != null && event.getCurrentItem().getType() == Material.POTION) {
 							if (Brew.isBrew(event.getCurrentItem())) {
-								// The item we are swapping with is also a brew, dont change the count and allow
+								// The item we are swapping with is also a brew, don't change the count and allow
 								break;
 							}
 						}

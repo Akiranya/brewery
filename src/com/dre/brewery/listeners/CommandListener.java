@@ -151,7 +151,7 @@ public class CommandListener implements CommandExecutor {
 
 		} else {
 
-			if (p.getServer().getPlayerExact(cmd) != null || BPlayer.hasPlayerbyName(cmd)) {
+			if (p.getServer().getPlayerExact(cmd) != null || BPlayer.hasPlayerByName(cmd)) {
 
 				if (args.length == 1) {
 					if (sender.hasPermission("brewery.cmd.infoOther")) {
@@ -402,7 +402,7 @@ public class CommandListener implements CommandExecutor {
 			if (selfInfo) {
 				bPlayer.showDrunkeness(player);
 			} else {
-				p.msg(sender, p.languageReader.get("CMD_Info_Drunk", playerName, "" + bPlayer.getDrunkeness(), "" + bPlayer.getQuality()));
+				p.msg(sender, p.languageReader.get("CMD_Info_Drunk", playerName, "" + bPlayer.getDrunkenness(), "" + bPlayer.getQuality()));
 			}
 		}
 
@@ -417,11 +417,7 @@ public class CommandListener implements CommandExecutor {
 		Player player = (Player) sender;
 		@SuppressWarnings("deprecation")
 		ItemStack hand = P.use1_9 ? player.getInventory().getItemInMainHand() : player.getItemInHand();
-		if (hand != null) {
-			p.msg(sender, p.languageReader.get("CMD_Configname", hand.getType().name().toLowerCase(Locale.ENGLISH)));
-		} else {
-			p.msg(sender, p.languageReader.get("CMD_Configname_Error"));
-		}
+		p.msg(sender, p.languageReader.get("CMD_Configname", hand.getType().name().toLowerCase(Locale.ENGLISH)));
 
 	}
 
@@ -453,18 +449,16 @@ public class CommandListener implements CommandExecutor {
 		}
 		Player player = (Player) sender;
 		ItemStack hand = player.getItemInHand();
-		if (hand != null) {
-			if (Brew.isBrew(hand)) {
-				while (count > 0) {
-					ItemStack item = hand.clone();
-					if (!(player.getInventory().addItem(item)).isEmpty()) {
-						p.msg(sender, p.languageReader.get("CMD_Copy_Error", "" + count));
-						return;
-					}
-					count--;
+		if (Brew.isBrew(hand)) {
+			while (count > 0) {
+				ItemStack item = hand.clone();
+				if (!(player.getInventory().addItem(item)).isEmpty()) {
+					p.msg(sender, p.languageReader.get("CMD_Copy_Error", "" + count));
+					return;
 				}
-				return;
+				count--;
 			}
+			return;
 		}
 
 		p.msg(sender, p.languageReader.get("Error_ItemNotPotion"));
@@ -480,11 +474,9 @@ public class CommandListener implements CommandExecutor {
 		}
 		Player player = (Player) sender;
 		ItemStack hand = player.getItemInHand();
-		if (hand != null) {
-			if (Brew.isBrew(hand)) {
-				player.setItemInHand(new ItemStack(Material.AIR));
-				return;
-			}
+		if (Brew.isBrew(hand)) {
+			player.setItemInHand(new ItemStack(Material.AIR));
+			return;
 		}
 		p.msg(sender, p.languageReader.get("Error_ItemNotPotion"));
 
@@ -498,51 +490,49 @@ public class CommandListener implements CommandExecutor {
 		}
 		Player player = (Player) sender;
 		ItemStack hand = player.getInventory().getItemInMainHand();
-		if (hand != null) {
-			Brew brew = Brew.get(hand);
-			if (brew == null) return;
-			P.p.log(brew.toString());
-			BIngredients ingredients = brew.getIngredients();
-			if (recipeName == null) {
-				P.p.log("&lIngredients:");
-				for (Ingredient ing : ingredients.getIngredientList()) {
-					P.p.log(ing.toString());
-				}
-				P.p.log("&lTesting Recipes");
-				for (BRecipe recipe : BRecipe.getAllRecipes()) {
-					int ingQ = ingredients.getIngredientQuality(recipe);
-					int cookQ = ingredients.getCookingQuality(recipe, false);
-					int cookDistQ = ingredients.getCookingQuality(recipe, true);
-					int ageQ = ingredients.getAgeQuality(recipe, brew.getAgeTime());
-					P.p.log(recipe.getRecipeName() + ": ingQlty: " + ingQ + ", cookQlty:" + cookQ + ", cook+DistQlty: " + cookDistQ + ", ageQlty: " + ageQ);
-				}
-				BRecipe distill = ingredients.getBestRecipe(brew.getWood(), brew.getAgeTime(), true);
-				BRecipe nonDistill = ingredients.getBestRecipe(brew.getWood(), brew.getAgeTime(), false);
-				P.p.log("&lWould prefer Recipe: " + (nonDistill == null ? "none" : nonDistill.getRecipeName()) + " and Distill-Recipe: " + (distill == null ? "none" : distill.getRecipeName()));
-			} else {
-				BRecipe recipe = BRecipe.getMatching(recipeName);
-				if (recipe == null) {
-					P.p.msg(player, "Could not find Recipe " + recipeName);
-					return;
-				}
-				P.p.log("&lIngredients in Recipe " + recipe.getRecipeName() + ":");
-				for (RecipeItem ri : recipe.getIngredients()) {
-					P.p.log(ri.toString());
-				}
-				P.p.log("&lIngredients in Brew:");
-				for (Ingredient ingredient : ingredients.getIngredientList()) {
-					int amountInRecipe = recipe.amountOf(ingredient);
-					P.p.log(ingredient.toString() + ": " + amountInRecipe + " of this are in the Recipe");
-				}
+		Brew brew = Brew.get(hand);
+		if (brew == null) return;
+		P.p.log(brew.toString());
+		BIngredients ingredients = brew.getIngredients();
+		if (recipeName == null) {
+			P.p.log("&lIngredients:");
+			for (Ingredient ing : ingredients.getIngredientList()) {
+				P.p.log(ing.toString());
+			}
+			P.p.log("&lTesting Recipes");
+			for (BRecipe recipe : BRecipe.getAllRecipes()) {
 				int ingQ = ingredients.getIngredientQuality(recipe);
 				int cookQ = ingredients.getCookingQuality(recipe, false);
 				int cookDistQ = ingredients.getCookingQuality(recipe, true);
 				int ageQ = ingredients.getAgeQuality(recipe, brew.getAgeTime());
-				P.p.log("ingQlty: " + ingQ + ", cookQlty:" + cookQ + ", cook+DistQlty: " + cookDistQ  + ", ageQlty: " + ageQ);
+				P.p.log(recipe.getRecipeName() + ": ingQlty: " + ingQ + ", cookQlty:" + cookQ + ", cook+DistQlty: " + cookDistQ + ", ageQlty: " + ageQ);
 			}
-
-			P.p.msg(player, "Debug Info for item written into Log");
+			BRecipe distill = ingredients.getBestRecipe(brew.getWood(), brew.getAgeTime(), true);
+			BRecipe nonDistill = ingredients.getBestRecipe(brew.getWood(), brew.getAgeTime(), false);
+			P.p.log("&lWould prefer Recipe: " + (nonDistill == null ? "none" : nonDistill.getRecipeName()) + " and Distill-Recipe: " + (distill == null ? "none" : distill.getRecipeName()));
+		} else {
+			BRecipe recipe = BRecipe.getMatching(recipeName);
+			if (recipe == null) {
+				P.p.msg(player, "Could not find Recipe " + recipeName);
+				return;
+			}
+			P.p.log("&lIngredients in Recipe " + recipe.getRecipeName() + ":");
+			for (RecipeItem ri : recipe.getIngredients()) {
+				P.p.log(ri.toString());
+			}
+			P.p.log("&lIngredients in Brew:");
+			for (Ingredient ingredient : ingredients.getIngredientList()) {
+				int amountInRecipe = recipe.amountOf(ingredient);
+				P.p.log(ingredient.toString() + ": " + amountInRecipe + " of this are in the Recipe");
+			}
+			int ingQ = ingredients.getIngredientQuality(recipe);
+			int cookQ = ingredients.getCookingQuality(recipe, false);
+			int cookDistQ = ingredients.getCookingQuality(recipe, true);
+			int ageQ = ingredients.getAgeQuality(recipe, brew.getAgeTime());
+			P.p.log("ingQlty: " + ingQ + ", cookQlty:" + cookQ + ", cook+DistQlty: " + cookDistQ  + ", ageQlty: " + ageQ);
 		}
+
+		P.p.msg(player, "Debug Info for item written into Log");
 	}
 
 	public void showStats(CommandSender sender) {
@@ -565,33 +555,31 @@ public class CommandListener implements CommandExecutor {
 		}
 		Player player = (Player) sender;
 		ItemStack hand = player.getItemInHand();
-		if (hand != null) {
-			Brew brew = Brew.get(hand);
-			if (brew != null) {
-				if (brew.isStatic()) {
-					if (!brew.isStripped()) {
-						brew.setStatic(false, hand);
-						p.msg(sender, p.languageReader.get("CMD_NonStatic"));
-					} else {
-						p.msg(sender, p.languageReader.get("Error_SealedAlwaysStatic"));
-						return;
-					}
+		Brew brew = Brew.get(hand);
+		if (brew != null) {
+			if (brew.isStatic()) {
+				if (!brew.isStripped()) {
+					brew.setStatic(false, hand);
+					p.msg(sender, p.languageReader.get("CMD_NonStatic"));
 				} else {
-					brew.setStatic(true, hand);
-					p.msg(sender, p.languageReader.get("CMD_Static"));
-				}
-				brew.touch();
-				ItemMeta meta = hand.getItemMeta();
-				assert meta != null;
-				BrewModifyEvent modifyEvent = new BrewModifyEvent(brew, meta, BrewModifyEvent.Type.STATIC);
-				P.p.getServer().getPluginManager().callEvent(modifyEvent);
-				if (modifyEvent.isCancelled()) {
+					p.msg(sender, p.languageReader.get("Error_SealedAlwaysStatic"));
 					return;
 				}
-				brew.save(meta);
-				hand.setItemMeta(meta);
+			} else {
+				brew.setStatic(true, hand);
+				p.msg(sender, p.languageReader.get("CMD_Static"));
+			}
+			brew.touch();
+			ItemMeta meta = hand.getItemMeta();
+			assert meta != null;
+			BrewModifyEvent modifyEvent = new BrewModifyEvent(brew, meta, BrewModifyEvent.Type.STATIC);
+			P.p.getServer().getPluginManager().callEvent(modifyEvent);
+			if (modifyEvent.isCancelled()) {
 				return;
 			}
+			brew.save(meta);
+			hand.setItemMeta(meta);
+			return;
 		}
 		p.msg(sender, p.languageReader.get("Error_ItemNotPotion"));
 
@@ -606,29 +594,27 @@ public class CommandListener implements CommandExecutor {
 		}
 		Player player = (Player) sender;
 		ItemStack hand = player.getItemInHand();
-		if (hand != null) {
-			Brew brew = Brew.get(hand);
-			if (brew != null) {
-				if (!brew.isUnlabeled()) {
-					ItemMeta origMeta = hand.getItemMeta();
-					brew.unLabel(hand);
-					brew.touch();
-					ItemMeta meta = hand.getItemMeta();
-					assert meta != null;
-					BrewModifyEvent modifyEvent = new BrewModifyEvent(brew, meta, BrewModifyEvent.Type.UNLABEL);
-					P.p.getServer().getPluginManager().callEvent(modifyEvent);
-					if (modifyEvent.isCancelled()) {
-						hand.setItemMeta(origMeta);
-						return;
-					}
-					brew.save(meta);
-					hand.setItemMeta(meta);
-					p.msg(sender, p.languageReader.get("CMD_UnLabel"));
-					return;
-				} else {
-					p.msg(sender, p.languageReader.get("Error_AlreadyUnlabeled"));
+		Brew brew = Brew.get(hand);
+		if (brew != null) {
+			if (!brew.isUnlabeled()) {
+				ItemMeta origMeta = hand.getItemMeta();
+				brew.unLabel(hand);
+				brew.touch();
+				ItemMeta meta = hand.getItemMeta();
+				assert meta != null;
+				BrewModifyEvent modifyEvent = new BrewModifyEvent(brew, meta, BrewModifyEvent.Type.UNLABEL);
+				P.p.getServer().getPluginManager().callEvent(modifyEvent);
+				if (modifyEvent.isCancelled()) {
+					hand.setItemMeta(origMeta);
 					return;
 				}
+				brew.save(meta);
+				hand.setItemMeta(meta);
+				p.msg(sender, p.languageReader.get("CMD_UnLabel"));
+				return;
+			} else {
+				p.msg(sender, p.languageReader.get("Error_AlreadyUnlabeled"));
+				return;
 			}
 		}
 		p.msg(sender, p.languageReader.get("Error_ItemNotPotion"));

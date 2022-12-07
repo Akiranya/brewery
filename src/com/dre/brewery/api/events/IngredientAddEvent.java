@@ -16,10 +16,12 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Player adding an ingredient to a cauldron.
- * <p>Always one item added at a time.
- * <p>If needed use the caudrons add method to manually add more Items
+ * <p>
+ * Always one item added at a time.
+ * <p>
+ * If needed, use the cauldrons add method to manually add more items.
  */
-public class IngedientAddEvent extends PlayerEvent implements Cancellable {
+public class IngredientAddEvent extends PlayerEvent implements Cancellable {
 	private static final HandlerList handlers = new HandlerList();
 	private final Block block;
 	private final BCauldron cauldron;
@@ -28,12 +30,17 @@ public class IngedientAddEvent extends PlayerEvent implements Cancellable {
 	private boolean cancelled;
 	private boolean takeItem = true;
 
-	public IngedientAddEvent(Player who, Block block, BCauldron bCauldron, ItemStack ingredient, RecipeItem rItem) {
+	public IngredientAddEvent(Player who, Block block, BCauldron bCauldron, ItemStack ingredient, RecipeItem rItem) {
 		super(who);
 		this.block = block;
 		cauldron = bCauldron;
 		this.rItem = rItem;
 		this.ingredient = ingredient;
+	}
+
+	// Required by Bukkit
+	public static HandlerList getHandlerList() {
+		return handlers;
 	}
 
 	public Block getBlock() {
@@ -46,8 +53,12 @@ public class IngedientAddEvent extends PlayerEvent implements Cancellable {
 
 	/**
 	 * The Recipe item that matches the ingredient.
-	 * <p>This might not be the only recipe item that will match the ingredient
-	 * <p>Will be recalculated if the Ingredient is changed with the setIngredient Method
+	 *
+	 * <p>This might not be the only recipe item that will match the
+	 * ingredient.
+	 *
+	 * <p>Will be recalculated if {@link #ingredient} is changed
+	 * with the {@link #setIngredient(org.bukkit.inventory.ItemStack)} method.
 	 */
 	public RecipeItem getRecipeItem() {
 		return rItem;
@@ -55,8 +66,11 @@ public class IngedientAddEvent extends PlayerEvent implements Cancellable {
 
 	/**
 	 * Get the item currently being added to the cauldron by the player.
-	 * <p>Can be changed directly (mutable) or with the setter Method
-	 * <p>The amount is ignored and always one added
+	 *
+	 * <p>Can be changed directly (mutable) or with {@link
+	 * #setIngredient(org.bukkit.inventory.ItemStack)} method.
+	 *
+	 * <p>The amount is ignored and always one added.
 	 *
 	 * @return The item being added
 	 */
@@ -66,9 +80,13 @@ public class IngedientAddEvent extends PlayerEvent implements Cancellable {
 
 	/**
 	 * Set the ingredient added to the cauldron to something else.
-	 * <p>Will always be accepted, even when not in a recipe or the cooked lis
-	 * <p>The amount is ignored and always one added
-	 * <p>This also recalculates the recipeItem!
+	 *
+	 * <p>Will always be accepted, even when not in a recipe or the cooked
+	 * list.
+	 *
+	 * <p>The amount is ignored and always one added.
+	 *
+	 * <p>This also recalculates the recipeItem {@link #rItem}!
 	 *
 	 * @param ingredient The item to add instead
 	 */
@@ -80,7 +98,8 @@ public class IngedientAddEvent extends PlayerEvent implements Cancellable {
 
 	/**
 	 * If the amount of the item in the players hand should be decreased.
-	 * (Default true)
+	 *
+	 * <p>(Default: true)
 	 */
 	public boolean willTakeItem() {
 		return takeItem;
@@ -97,9 +116,10 @@ public class IngedientAddEvent extends PlayerEvent implements Cancellable {
 
 	/**
 	 * Get the BlockData of the Cauldron.
-	 * <p>May be null if the Cauldron does not exist anymore
 	 *
-	 * @return The BlockData of the cauldron
+	 * <p>May be null if the Cauldron does not exist anymore.
+	 *
+	 * @return The {@link org.bukkit.block.data.BlockData} of the cauldron
 	 */
 	@Nullable
 	public Levelled getCauldronData() {
@@ -112,8 +132,11 @@ public class IngedientAddEvent extends PlayerEvent implements Cancellable {
 
 	/**
 	 * Get the water fill level of the Cauldron.
-	 * <p>0 = empty, 1 = something in, 2 = full
-	 * <p>Can use BCauldron.EMPTY, BCauldron.SOME, BCauldron.FULL
+	 *
+	 * <p>0 = empty, 1 = something in, 2 = full.
+	 *
+	 * <p>Can use {@code BCauldron.EMPTY}, {@code BCauldron.SOME}, {@code
+	 * BCauldron.FULL}.
 	 *
 	 * @return The fill level as a byte 0-2
 	 */
@@ -127,7 +150,8 @@ public class IngedientAddEvent extends PlayerEvent implements Cancellable {
 	}
 
 	/**
-	 * If the event is cancelled, no item will be added or taken from the player.
+	 * If the event is cancelled, no item will be added or taken from the
+	 * player.
 	 */
 	@Override
 	public void setCancelled(boolean cancelled) {
@@ -137,11 +161,6 @@ public class IngedientAddEvent extends PlayerEvent implements Cancellable {
 	@NotNull
 	@Override
 	public HandlerList getHandlers() {
-		return handlers;
-	}
-
-	// Required by Bukkit
-	public static HandlerList getHandlerList() {
 		return handlers;
 	}
 }

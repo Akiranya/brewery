@@ -26,7 +26,6 @@ public class BData {
 	public static AtomicInteger dataMutex = new AtomicInteger(0); // WorldData: -1 = Saving, 0 = Free, >= 1 = Loading
 	public static FileConfiguration worldData = null; // World Data Cache for consecutive loading of Worlds. Nulled after a data save
 
-
 	// load all Data
 	public static void readData() {
 		File file = new File(P.p.getDataFolder(), "data.yml");
@@ -210,7 +209,7 @@ public class BData {
 				} else {
 					m = Material.matchMaterial(matSplit[0], true);
 				}
-				P.p.debugLog("converting Data Material from " + matSplit[0] + " to " + m);
+				P.p.debugLog("Converting Data Material from " + matSplit[0] + " to " + m);
 			}
 			if (m == null) continue;
 			SimpleItem item;

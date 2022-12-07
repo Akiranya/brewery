@@ -13,14 +13,14 @@ import java.util.Objects;
 
 /**
  * Custom Item that matches any one of the given info.
- * <p>Does not implement Ingredient, as it can not directly be added to an ingredient
+ *
+ * <p>Does not implement Ingredient, as it can not directly be added to an ingredient.
  */
 public class CustomMatchAnyItem extends RecipeItem {
 
 	private List<Material> materials;
 	private List<String> names;
 	private List<String> lore;
-
 
 	@Override
 	public boolean hasMaterials() {
@@ -82,7 +82,7 @@ public class CustomMatchAnyItem extends RecipeItem {
 			return new CustomItem(null, null, lore);
 		}
 
-		// Shouldnt happen
+		// Shouldn't happen
 		return new SimpleItem(Material.GOLDEN_HOE);
 	}
 
@@ -101,7 +101,7 @@ public class CustomMatchAnyItem extends RecipeItem {
 			return new CustomItem(null, null, l);
 		}
 
-		// Shouldnt happen
+		// Shouldn't happen
 		return new SimpleItem(Material.GOLDEN_HOE);
 	}
 
@@ -210,8 +210,8 @@ public class CustomMatchAnyItem extends RecipeItem {
 		if (!super.equals(o)) return false;
 		CustomMatchAnyItem that = (CustomMatchAnyItem) o;
 		return Objects.equals(materials, that.materials) &&
-			Objects.equals(names, that.names) &&
-			Objects.equals(lore, that.lore);
+				Objects.equals(names, that.names) &&
+				Objects.equals(lore, that.lore);
 	}
 
 	@Override
@@ -222,10 +222,10 @@ public class CustomMatchAnyItem extends RecipeItem {
 	@Override
 	public String toString() {
 		return "CustomMatchAnyItem{" +
-			"id=" + getConfigId() +
-			", materials: " + (materials != null ? materials.size() : 0) +
-			", names:" + (names != null ? names.size() : 0) +
-			", loresize: " + (lore != null ? lore.size() : 0) +
-			'}';
+				"id=" + getConfigId() +
+				", materials: " + (materials != null ? materials.size() : 0) +
+				", names:" + (names != null ? names.size() : 0) +
+				", loreSize: " + (lore != null ? lore.size() : 0) +
+				'}';
 	}
 }

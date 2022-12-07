@@ -22,7 +22,7 @@ public class SQLSync {
 	public void updatePlayer(UUID uuid, BPlayer bPlayer, boolean offlineDrain) {
 		SQLData_BP bP = new SQLData_BP();
 		bP.uuid = uuid;
-		bP.drunkeness = bPlayer.getDrunkeness();
+		bP.drunkeness = bPlayer.getDrunkenness();
 		bP.offlineDrunk = bPlayer.getOfflineDrunkeness();
 		bP.quality = bPlayer.getQualityData();
 		bP.data = null;

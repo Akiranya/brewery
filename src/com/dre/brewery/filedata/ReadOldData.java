@@ -32,7 +32,6 @@ public class ReadOldData extends BukkitRunnable {
 			}
 		}
 
-
 		File worldDataFile = new File(P.p.getDataFolder(), "worlddata.yml");
 		if (BData.worldData == null) {
 			if (!worldDataFile.exists()) {

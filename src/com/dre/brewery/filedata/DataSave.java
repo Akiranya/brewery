@@ -17,7 +17,7 @@ public class DataSave extends BukkitRunnable {
 
 	public static int lastBackup = 0;
 	public static int lastSave = 1;
-	public static int autosave = 3;
+	public static int autoSave = 3;
 	final public static String dataVersion = "1.2";
 	public static DataSave running;
 	public static List<World> unloadingWorlds = new CopyOnWriteArrayList<>();
@@ -34,6 +34,35 @@ public class DataSave extends BukkitRunnable {
 		loadedWorlds = P.p.getServer().getWorlds();
 	}
 
+	// Save all data. Takes a boolean whether all data should be collected in instantly
+	public static void save(boolean collectInstant) {
+		if (running != null) {
+			P.p.log("Another Save was started while a Save was in Progress");
+			if (collectInstant) {
+				running.now();
+			}
+			return;
+		}
+
+		ReadOldData read = new ReadOldData();
+		if (collectInstant) {
+			read.run();
+			running = new DataSave(read);
+			running.run();
+		} else {
+			read.runTaskAsynchronously(P.p);
+			running = new DataSave(read);
+			running.runTaskTimer(P.p, 1, 2);
+		}
+	}
+
+	public static void autoSave() {
+		if (lastSave >= autoSave) {
+			save(false);// save all data
+		} else {
+			lastSave++;
+		}
+	}
 
 	// Running in Main Thread
 	@Override
@@ -126,7 +155,7 @@ public class DataSave extends BukkitRunnable {
 				unloadingWorlds.clear();
 			}
 
-			P.p.debugLog("saving: " + ((System.nanoTime() - saveTime) / 1000000.0) + "ms");
+			P.p.debugLog("Saving: " + ((System.nanoTime() - saveTime) / 1000000.0) + "ms");
 
 			if (P.p.isEnabled()) {
 				P.p.getServer().getScheduler().runTaskAsynchronously(P.p, new WriteData(data, worldData));
@@ -165,38 +194,6 @@ public class DataSave extends BukkitRunnable {
 		if (!collected) {
 			cancel();
 			run();
-		}
-	}
-
-
-
-	// Save all data. Takes a boolean whether all data should be collected in instantly
-	public static void save(boolean collectInstant) {
-		if (running != null) {
-			P.p.log("Another Save was started while a Save was in Progress");
-			if (collectInstant) {
-				running.now();
-			}
-			return;
-		}
-
-		ReadOldData read = new ReadOldData();
-		if (collectInstant) {
-			read.run();
-			running = new DataSave(read);
-			running.run();
-		} else {
-			read.runTaskAsynchronously(P.p);
-			running = new DataSave(read);
-			running.runTaskTimer(P.p, 1, 2);
-		}
-	}
-
-	public static void autoSave() {
-		if (lastSave >= autosave) {
-			save(false);// save all data
-		} else {
-			lastSave++;
 		}
 	}
 }

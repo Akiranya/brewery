@@ -19,7 +19,7 @@ public class Wakeup {
 	public static int checkId = -1;
 	public static Player checkPlayer = null;
 
-	private Location loc;
+	private final Location loc;
 	private boolean active = true;
 
 	public Wakeup(Location loc) {
@@ -33,9 +33,9 @@ public class Wakeup {
 		}
 
 		List<Wakeup> worldWakes = wakeups.stream()
-			.filter(w -> w.active)
-			.filter(w -> w.loc.getWorld().equals(playerLoc.getWorld()))
-			.collect(Collectors.toList());
+				.filter(w -> w.active)
+				.filter(w -> w.loc.getWorld().equals(playerLoc.getWorld()))
+				.collect(Collectors.toList());
 
 		if (worldWakes.isEmpty()) {
 			return null;
@@ -160,7 +160,7 @@ public class Wakeup {
 					int x = (int) wakeup.loc.getX();
 					int y = (int) wakeup.loc.getY();
 					int z = (int) wakeup.loc.getZ();
-					p.msg(sender, p.languageReader.get("Player_WakeFilled", "" + id, world, "" + x , "" + y, "" + z));
+					p.msg(sender, p.languageReader.get("Player_WakeFilled", "" + id, world, "" + x, "" + y, "" + z));
 				}
 
 			} else {
@@ -179,10 +179,6 @@ public class Wakeup {
 		} else {
 			p.msg(sender, p.languageReader.get("Error_PlayerCommand"));
 		}
-	}
-
-	public boolean check() {
-		return (!loc.getBlock().getType().isSolid() && !loc.getBlock().getRelative(0, 1, 0).getType().isSolid());
 	}
 
 	public static void tpNext() {
@@ -206,10 +202,10 @@ public class Wakeup {
 		int z = (int) wakeup.loc.getZ();
 
 		if (wakeup.check()) {
-			p.msg(checkPlayer, p.languageReader.get("Player_WakeTeleport", "" + checkId, world, "" + x , "" + y, "" + z));
+			p.msg(checkPlayer, p.languageReader.get("Player_WakeTeleport", "" + checkId, world, "" + x, "" + y, "" + z));
 			checkPlayer.teleport(wakeup.loc);
 		} else {
-			p.msg(checkPlayer, p.languageReader.get("Player_WakeFilled", "" + checkId, world, "" + x , "" + y, "" + z));
+			p.msg(checkPlayer, p.languageReader.get("Player_WakeFilled", "" + checkId, world, "" + x, "" + y, "" + z));
 		}
 		p.msg(checkPlayer, p.languageReader.get("Player_WakeHint1"));
 		p.msg(checkPlayer, p.languageReader.get("Player_WakeHint2"));
@@ -224,7 +220,6 @@ public class Wakeup {
 		}
 		p.msg(sender, p.languageReader.get("Player_WakeNoCheck"));
 	}
-
 
 	public static void save(ConfigurationSection section, ConfigurationSection oldData) {
 		BUtil.createWorldSections(section);
@@ -246,7 +241,7 @@ public class Wakeup {
 				if (worldName.startsWith("DXL_")) {
 					prefix = BUtil.getDxlName(worldName) + "." + id;
 				} else {
-					prefix = wakeup.loc.getWorld().getUID().toString() + "." + id;
+					prefix = wakeup.loc.getWorld().getUID() + "." + id;
 				}
 
 				section.set(prefix, wakeup.loc.getX() + "/" + wakeup.loc.getY() + "/" + wakeup.loc.getZ() + "/" + wakeup.loc.getPitch() + "/" + wakeup.loc.getYaw());
@@ -254,7 +249,7 @@ public class Wakeup {
 		}
 
 		// copy Wakeups that are not loaded
-		if (oldData != null){
+		if (oldData != null) {
 			for (String uuid : oldData.getKeys(false)) {
 				if (!section.contains(uuid)) {
 					section.set(uuid, oldData.get(uuid));
@@ -270,6 +265,10 @@ public class Wakeup {
 	public static void unloadWorlds() {
 		List<World> worlds = P.p.getServer().getWorlds();
 		wakeups.removeIf(wakeup -> !worlds.contains(wakeup.loc.getWorld()));
+	}
+
+	public boolean check() {
+		return (!loc.getBlock().getType().isSolid() && !loc.getBlock().getRelative(0, 1, 0).getType().isSolid());
 	}
 
 }

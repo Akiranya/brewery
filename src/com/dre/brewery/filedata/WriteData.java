@@ -12,8 +12,8 @@ import com.dre.brewery.P;
  */
 public class WriteData implements Runnable {
 
-	private FileConfiguration data;
-	private FileConfiguration worldData;
+	private final FileConfiguration data;
+	private final FileConfiguration worldData;
 
 	public WriteData(FileConfiguration data, FileConfiguration worldData) {
 		this.data = data;
@@ -23,7 +23,7 @@ public class WriteData implements Runnable {
 	@Override
 	public void run() {
 		File datafile = new File(P.p.getDataFolder(), "data.yml");
-		File worlddatafile = new File(P.p.getDataFolder(), "worlddata.yml");
+		File worldDataFile = new File(P.p.getDataFolder(), "worlddata.yml");
 
 		try {
 			data.save(datafile);
@@ -31,7 +31,7 @@ public class WriteData implements Runnable {
 			e.printStackTrace();
 		}
 		try {
-			worldData.save(worlddatafile);
+			worldData.save(worldDataFile);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

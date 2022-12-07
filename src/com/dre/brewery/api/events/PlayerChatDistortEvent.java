@@ -5,7 +5,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
@@ -62,7 +61,7 @@ public class PlayerChatDistortEvent extends Event implements Cancellable {
 	 * @return The drunkeness of the player that is writing the message
 	 */
 	public int getDrunkeness() {
-		return bPlayer.getDrunkeness();
+		return bPlayer.getDrunkenness();
 	}
 
 	/**

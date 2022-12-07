@@ -21,7 +21,6 @@
  */
 
 
-
 package com.dre.brewery;
 
 import com.dre.brewery.filedata.BConfig;
@@ -63,7 +62,7 @@ public class P extends JavaPlugin {
 	public static boolean use1_13;
 	public static boolean use1_14;
 
-	// Listeners
+	// ---- Listeners ----
 	public BlockListener blockListener;
 	public PlayerListener playerListener;
 	public EntityListener entityListener;
@@ -71,15 +70,19 @@ public class P extends JavaPlugin {
 	public WorldListener worldListener;
 	public IntegrationListener integrationListener;
 
-	// Registrations
+	// ---- Registrations ----
 	public Map<String, Function<ItemLoader, Ingredient>> ingredientLoaders = new HashMap<>();
 
-	// Language
+	// ---- Language ----
 	public String language;
 	public LanguageReader languageReader;
 
-	// Metrics
+	// ---- Metrics ----
 	public Stats stats = new Stats();
+
+	public static P getInstance() {
+		return p;
+	}
 
 	@Override
 	public void onEnable() {
@@ -284,9 +287,8 @@ public class P extends JavaPlugin {
 	 * <p>Register a Static function that takes an ItemLoader, containing a DataInputStream.
 	 * <p>Using the Stream it constructs a corresponding Ingredient for the chosen SaveID
 	 *
-	 * @param saveID The SaveID should be a small identifier like "AB"
-	 * @param loadFct The Static Function that loads the Item, i.e.
-	 *                public static AItem loadFrom(ItemLoader loader)
+	 * @param saveID  The SaveID should be a small identifier like "AB"
+	 * @param loadFct The Static Function that loads the Item, i.e. public static AItem loadFrom(ItemLoader loader)
 	 */
 	public void registerForItemLoader(String saveID, Function<ItemLoader, Ingredient> loadFct) {
 		ingredientLoaders.put(saveID, loadFct);
@@ -301,14 +303,11 @@ public class P extends JavaPlugin {
 		ingredientLoaders.remove(saveID);
 	}
 
-	public static P getInstance() {
-		return p;
-	}
 
-	// Utility
+	// ---- Utility ----
 
 	public void msg(CommandSender sender, String msg) {
-		if(languageReader == null){
+		if (languageReader == null) {
 			sender.sendMessage(color("&2[Brewery] &f" + msg));
 		} else {
 			sender.sendMessage(color(languageReader.get("Prefix") + " &f" + msg));
@@ -369,7 +368,8 @@ public class P extends JavaPlugin {
 		return BUtil.color(msg);
 	}
 
-	// Runnables
+
+	// ---- Runnables ----
 
 	public static class DrunkRunnable implements Runnable {
 		@Override
@@ -377,6 +377,17 @@ public class P extends JavaPlugin {
 			if (!BPlayer.isEmpty()) {
 				BPlayer.drunkeness();
 			}
+		}
+	}
+
+	public static class CauldronParticles implements Runnable {
+		@Override
+		public void run() {
+			if (!BConfig.enableCauldronParticles) return;
+			if (BConfig.minimalParticles && BCauldron.particleRandom.nextFloat() > 0.5f) {
+				return;
+			}
+			BCauldron.processCookEffects();
 		}
 	}
 
@@ -398,22 +409,11 @@ public class P extends JavaPlugin {
 			long t6 = System.nanoTime();
 
 			debugLog("BreweryRunnable: " +
-				"t1: " + (t2 - t1) / 1000000.0 + "ms" +
-				" | t2: " + (t3 - t2) / 1000000.0 + "ms" +
-				" | t3: " + (t4 - t3) / 1000000.0 + "ms" +
-				" | t4: " + (t5 - t4) / 1000000.0 + "ms" +
-				" | t5: " + (t6 - t5) / 1000000.0 + "ms" );
-		}
-	}
-
-	public static class CauldronParticles implements Runnable {
-		@Override
-		public void run() {
-			if (!BConfig.enableCauldronParticles) return;
-			if (BConfig.minimalParticles && BCauldron.particleRandom.nextFloat() > 0.5f) {
-				return;
-			}
-			BCauldron.processCookEffects();
+					"t1: " + (t2 - t1) / 1000000.0 + "ms" +
+					" | t2: " + (t3 - t2) / 1000000.0 + "ms" +
+					" | t3: " + (t4 - t3) / 1000000.0 + "ms" +
+					" | t4: " + (t5 - t4) / 1000000.0 + "ms" +
+					" | t5: " + (t6 - t5) / 1000000.0 + "ms");
 		}
 	}
 

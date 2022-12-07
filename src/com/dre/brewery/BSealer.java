@@ -19,6 +19,7 @@ import java.util.Iterator;
 
 /**
  * The Sealing Inventory that is being checked for Brews and seals them after a second.
+ *
  * <p>Class doesn't load in mc 1.12 and lower (Can't find RecipeChoice, BlockData and NamespacedKey)
  */
 public class BSealer implements InventoryHolder {
@@ -28,7 +29,7 @@ public class BSealer implements InventoryHolder {
 
 	private final Inventory inventory;
 	private final Player player;
-	private short[] slotTime = new short[9];
+	private final short[] slotTime = new short[9];
 	private ItemStack[] contents = null;
 	private BukkitTask task;
 
@@ -47,11 +48,74 @@ public class BSealer implements InventoryHolder {
 		inventory = P.p.getServer().createInventory(this, 9, P.p.languageReader.get("Etc_SealingTable"));
 	}
 
-	@Override
-	public @NotNull Inventory getInventory() {
-		return inventory;
+	public static boolean isBSealer(Block block) {
+		if (P.use1_14 && block.getType() == Material.SMOKER) {
+			Container smoker = (Container) block.getState();
+			if (smoker.getCustomName() != null) {
+				if (smoker.getCustomName().equals("§e" + P.p.languageReader.get("Etc_SealingTable"))) {
+					return true;
+				} else {
+					return smoker.getPersistentDataContainer().has(TAG_KEY, PersistentDataType.BYTE);
+				}
+			}
+		}
+		return false;
 	}
 
+	public static void blockPlace(ItemStack item, Block block) {
+		if (item.getType() == Material.SMOKER && item.hasItemMeta()) {
+			ItemMeta itemMeta = item.getItemMeta();
+			assert itemMeta != null;
+			if ((itemMeta.hasDisplayName() && itemMeta.getDisplayName().equals("§e" + P.p.languageReader.get("Etc_SealingTable"))) ||
+					itemMeta.getPersistentDataContainer().has(BSealer.TAG_KEY, PersistentDataType.BYTE)) {
+				Container smoker = (Container) block.getState();
+				// Rotate the Block 180° so it doesn't look like a Smoker
+				Directional dir = (Directional) smoker.getBlockData();
+				dir.setFacing(dir.getFacing().getOppositeFace());
+				smoker.setBlockData(dir);
+				smoker.getPersistentDataContainer().set(BSealer.TAG_KEY, PersistentDataType.BYTE, (byte) 1);
+				smoker.update();
+			}
+		}
+	}
+
+	public static void registerRecipe() {
+		recipeRegistered = true;
+		ItemStack sealingTableItem = new ItemStack(Material.SMOKER);
+		ItemMeta meta = P.p.getServer().getItemFactory().getItemMeta(Material.SMOKER);
+		if (meta == null) return;
+		meta.setDisplayName("§e" + P.p.languageReader.get("Etc_SealingTable"));
+		meta.getPersistentDataContainer().set(TAG_KEY, PersistentDataType.BYTE, (byte) 1);
+		sealingTableItem.setItemMeta(meta);
+
+		ShapedRecipe recipe = new ShapedRecipe(new NamespacedKey(P.p, "SealingTable"), sealingTableItem);
+		recipe.shape("bb ",
+				"ww ",
+				"ww ");
+		recipe.setIngredient('b', Material.GLASS_BOTTLE);
+		recipe.setIngredient('w', new RecipeChoice.MaterialChoice(Tag.PLANKS));
+
+		P.p.getServer().addRecipe(recipe);
+	}
+
+	public static void unregisterRecipe() {
+		recipeRegistered = false;
+		//P.p.getServer().removeRecipe(new NamespacedKey(P.p, "SealingTable"));    1.15 Method
+		Iterator<Recipe> recipeIterator = P.p.getServer().recipeIterator();
+		while (recipeIterator.hasNext()) {
+			Recipe next = recipeIterator.next();
+			if (next instanceof ShapedRecipe && ((ShapedRecipe) next).getKey().equals(TAG_KEY)) {
+				recipeIterator.remove();
+				return;
+			}
+		}
+	}
+
+	@Override
+	public @NotNull
+	Inventory getInventory() {
+		return inventory;
+	}
 
 	public void clickInv() {
 		contents = null;
@@ -99,69 +163,6 @@ public class BSealer implements InventoryHolder {
 				}
 			} else if (slotTime[i] >= 0) {
 				slotTime[i]++;
-			}
-		}
-	}
-
-	public static boolean isBSealer(Block block) {
-		if (P.use1_14 && block.getType() == Material.SMOKER) {
-			Container smoker = (Container) block.getState();
-			if (smoker.getCustomName() != null) {
-				if (smoker.getCustomName().equals("§e" + P.p.languageReader.get("Etc_SealingTable"))) {
-					return true;
-				} else {
-					return smoker.getPersistentDataContainer().has(TAG_KEY, PersistentDataType.BYTE);
-				}
-			}
-		}
-		return false;
-	}
-
-	public static void blockPlace(ItemStack item, Block block) {
-		if (item.getType() == Material.SMOKER && item.hasItemMeta()) {
-			ItemMeta itemMeta = item.getItemMeta();
-			assert itemMeta != null;
-			if ((itemMeta.hasDisplayName() && itemMeta.getDisplayName().equals("§e" + P.p.languageReader.get("Etc_SealingTable"))) ||
-				itemMeta.getPersistentDataContainer().has(BSealer.TAG_KEY, PersistentDataType.BYTE)) {
-				Container smoker = (Container) block.getState();
-				// Rotate the Block 180° so it doesn't look like a Smoker
-				Directional dir = (Directional) smoker.getBlockData();
-				dir.setFacing(dir.getFacing().getOppositeFace());
-				smoker.setBlockData(dir);
-				smoker.getPersistentDataContainer().set(BSealer.TAG_KEY, PersistentDataType.BYTE, (byte)1);
-				smoker.update();
-			}
-		}
-	}
-
-	public static void registerRecipe() {
-		recipeRegistered = true;
-		ItemStack sealingTableItem = new ItemStack(Material.SMOKER);
-		ItemMeta meta = P.p.getServer().getItemFactory().getItemMeta(Material.SMOKER);
-		if (meta == null) return;
-		meta.setDisplayName("§e" + P.p.languageReader.get("Etc_SealingTable"));
-		meta.getPersistentDataContainer().set(TAG_KEY, PersistentDataType.BYTE, (byte)1);
-		sealingTableItem.setItemMeta(meta);
-
-		ShapedRecipe recipe = new ShapedRecipe(new NamespacedKey(P.p, "SealingTable"), sealingTableItem);
-		recipe.shape("bb ",
-					"ww ",
-					"ww ");
-		recipe.setIngredient('b', Material.GLASS_BOTTLE);
-		recipe.setIngredient('w', new RecipeChoice.MaterialChoice(Tag.PLANKS));
-
-		P.p.getServer().addRecipe(recipe);
-	}
-
-	public static void unregisterRecipe() {
-		recipeRegistered = false;
-		//P.p.getServer().removeRecipe(new NamespacedKey(P.p, "SealingTable"));    1.15 Method
-		Iterator<Recipe> recipeIterator = P.p.getServer().recipeIterator();
-		while (recipeIterator.hasNext()) {
-			Recipe next = recipeIterator.next();
-			if (next instanceof ShapedRecipe && ((ShapedRecipe) next).getKey().equals(TAG_KEY)) {
-				recipeIterator.remove();
-				return;
 			}
 		}
 	}

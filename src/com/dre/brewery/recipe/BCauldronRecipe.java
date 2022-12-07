@@ -23,10 +23,10 @@ public class BCauldronRecipe {
 	public static Set<Material> acceptedSimple = EnumSet.noneOf(Material.class); // All accepted simple items
 	public static Set<Material> acceptedMaterials = EnumSet.noneOf(Material.class); // Fast cache for all accepted Materials
 
-	private String name;
+	private final String name;
+	private final List<Tuple<Integer, Color>> particleColor = new ArrayList<>();
 	private List<RecipeItem> ingredients;
 	private PotionColor color;
-	private List<Tuple<Integer, Color>> particleColor = new ArrayList<>();
 	private List<String> lore;
 	private int cmData; // Custom Model Data
 	private boolean saveInData; // If this recipe should be saved in data and loaded again when the server restarts. Applicable to non-config recipes
@@ -103,7 +103,7 @@ public class BCauldronRecipe {
 		}
 
 
-		List<Tuple<Integer,String>> lore = BRecipe.loadQualityStringList(cfg, id + ".lore", StringParser.ParseType.LORE);
+		List<Tuple<Integer, String>> lore = BRecipe.loadQualityStringList(cfg, id + ".lore", StringParser.ParseType.LORE);
 		if (lore != null && !lore.isEmpty()) {
 			recipe.lore = lore.stream().map(Tuple::second).collect(Collectors.toList());
 		}
@@ -115,139 +115,6 @@ public class BCauldronRecipe {
 
 
 	// Getter
-
-	@NotNull
-	public String getName() {
-		return name;
-	}
-
-	@NotNull
-	public List<RecipeItem> getIngredients() {
-		return ingredients;
-	}
-
-	@NotNull
-	public PotionColor getColor() {
-		return color;
-	}
-
-	@NotNull
-	public List<Tuple<Integer, Color>> getParticleColor() {
-		return particleColor;
-	}
-
-	@Nullable
-	public List<String> getLore() {
-		return lore;
-	}
-
-	public boolean isSaveInData() {
-		return saveInData;
-	}
-
-
-	// Setter
-
-	/**
-	 * When Changing ingredients, Accepted Lists have to be updated in BCauldronRecipe
-	 */
-	public void setIngredients(@NotNull List<RecipeItem> ingredients) {
-		this.ingredients = ingredients;
-	}
-
-	public void setColor(@NotNull PotionColor color) {
-		this.color = color;
-	}
-
-	public void setLore(List<String> lore) {
-		this.lore = lore;
-	}
-
-	/**
-	 * Get the Custom Model Data
-	 */
-	public int getCmData() {
-		return cmData;
-	}
-
-	public void setSaveInData(boolean saveInData) {
-		this.saveInData = saveInData;
-	}
-
-	/**
-	 * Find how much these ingredients match the given ones from 0-10.
-	 * <p>If any ingredient is missing, returns 0
-	 * <br>Any included item that is not in the recipe, will drive the number down most heavily.
-	 * <br>More Amount of any item, will logarithmically raise the number
-	 * <br>Difference in Amount to what the recipe expects will make a tiny difference on the number
-	 * <p>So apart from unexpected items, more amount of the correct item will make the number go up,
-	 * with a little dip for difference in expected amount.
-	 *
-	 * <p>The thought behind this is, that a given list of ingredients matches this recipe most, when:
-	 * <br>1. It is not missing ingredients,
-	 * <br>2. It has no unexpected ingredients
-	 * <br>3. It has a lot of the matching ingredients, so that for two recipes, both having the same
-	 * amount of unexpected ingredients, the one matching the item with the highest amounts wins.
-	 * <br> For Example | Recipe_1: (Wheat*1), Recipe_2: (Sugar*1) | Ingredients: (Wheat*10, Sugar*5), Recipe_1 should win,
-	 * even though the difference in expected amount (1) is lower for Recipe_2
-	 * <br>4. It has the least difference in expected ingredient amount.
-	 */
-	public float getIngredientMatch(List<Ingredient> items) {
-		if (items.size() < ingredients.size()) {
-			return 0;
-		}
-		float match = 10;
-		search: for (RecipeItem recipeIng : ingredients) {
-			for (Ingredient ing : items) {
-				if (recipeIng.matches(ing)) {
-					double difference = Math.abs(recipeIng.getAmount() - ing.getAmount());
-					if (difference >= 1000) {
-						return 0;
-					}
-					// The Item Amount is the determining part here, the higher the better.
-					// But let the difference in amount to what the recipe expects have a tiny factor as well.
-					// This way for the same amount, the recipe with the lower difference wins.
-					double factor = ing.getAmount() * (1.0 - (difference / 1000.0)) ;
-					//double mod = 0.1 + (0.9 * Math.exp(-0.03 * difference)); // logarithmic curve from 1 to 0.1
-					double mod = 1 + (0.9 * -Math.exp(-0.03 * factor)); // logarithmic curve from 0.1 to 1, small for a low factor
-
-					match *= mod;
-					continue search;
-				}
-			}
-			return 0;
-		}
-		if (items.size() > ingredients.size()) {
-			// If there are too many items in the List, multiply the match by 0.1 per Item thats too much
-			// So that even if every other ingredient is perfect, a recipe that expects all these items will fare better
-			float tooMuch = items.size() - ingredients.size();
-			double mod = Math.pow(0.1, tooMuch);
-			match *= mod;
-		}
-		P.p.debugLog("Match for Cauldron Recipe " + name + ": " + match);
-		return match;
-	}
-
-	public void updateAcceptedLists() {
-		for (RecipeItem ingredient : getIngredients()) {
-			if (ingredient.hasMaterials()) {
-				BCauldronRecipe.acceptedMaterials.addAll(ingredient.getMaterials());
-			}
-			if (ingredient instanceof SimpleItem) {
-				BCauldronRecipe.acceptedSimple.add(((SimpleItem) ingredient).getMaterial());
-			} else {
-				// Add it as acceptedCustom
-				if (!BCauldronRecipe.acceptedCustom.contains(ingredient)) {
-					BCauldronRecipe.acceptedCustom.add(ingredient);
-				}
-			}
-		}
-	}
-
-	@Override
-	public String toString() {
-		return "BCauldronRecipe{" + name + '}';
-	}
 
 	@Nullable
 	public static BCauldronRecipe get(String name) {
@@ -284,6 +151,141 @@ public class BCauldronRecipe {
 	 */
 	public static List<BCauldronRecipe> getAllRecipes() {
 		return recipes;
+	}
+
+	@NotNull
+	public String getName() {
+		return name;
+	}
+
+	@NotNull
+	public List<RecipeItem> getIngredients() {
+		return ingredients;
+	}
+
+
+	// Setter
+
+	/**
+	 * When Changing ingredients, Accepted Lists have to be updated in BCauldronRecipe
+	 */
+	public void setIngredients(@NotNull List<RecipeItem> ingredients) {
+		this.ingredients = ingredients;
+	}
+
+	@NotNull
+	public PotionColor getColor() {
+		return color;
+	}
+
+	public void setColor(@NotNull PotionColor color) {
+		this.color = color;
+	}
+
+	@NotNull
+	public List<Tuple<Integer, Color>> getParticleColor() {
+		return particleColor;
+	}
+
+	@Nullable
+	public List<String> getLore() {
+		return lore;
+	}
+
+	public void setLore(List<String> lore) {
+		this.lore = lore;
+	}
+
+	public boolean isSaveInData() {
+		return saveInData;
+	}
+
+	public void setSaveInData(boolean saveInData) {
+		this.saveInData = saveInData;
+	}
+
+	/**
+	 * Get the Custom Model Data
+	 */
+	public int getCmData() {
+		return cmData;
+	}
+
+	/**
+	 * Find how much these ingredients match the given ones from 0-10.
+	 *
+	 * <p>If any ingredient is missing, returns 0.
+	 * <br>Any included item that is not in the recipe, will drive the number down most heavily.
+	 * <br>More Amount of any item, will logarithmically raise the number.
+	 * <br>Difference in Amount to what the recipe expects will make a tiny difference on the number, so apart from
+	 * unexpected items, more amount of the correct item will make the number go up, with a little dip for difference in
+	 * expected amount.
+	 *
+	 * <p>The thought behind this is, that a given list of ingredients matches this recipe most, when:
+	 * <br>1. It is not missing ingredients,
+	 * <br>2. It has no unexpected ingredients
+	 * <br>3. It has a lot of the matching ingredients, so that for two recipes, both having the same amount of
+	 * unexpected ingredients, the one matching the item with the highest amounts wins.
+	 * <br> For Example | Recipe_1: (Wheat*1), Recipe_2: (Sugar*1) | Ingredients: (Wheat*10, Sugar*5), Recipe_1 should
+	 * win, even though the difference in expected amount (1) is lower for Recipe_2
+	 * <br>4. It has the least difference in expected ingredient amount.
+	 */
+	public float getIngredientMatch(List<Ingredient> items) {
+		if (items.size() < ingredients.size()) {
+			return 0;
+		}
+		float match = 10;
+		search:
+		for (RecipeItem recipeIng : ingredients) {
+			for (Ingredient ing : items) {
+				if (recipeIng.matches(ing)) {
+					double difference = Math.abs(recipeIng.getAmount() - ing.getAmount());
+					if (difference >= 1000) {
+						return 0;
+					}
+					// The Item Amount is the determining part here, the higher, the better.
+					// But let the difference in amount to what the recipe expects have a tiny factor as well.
+					// This way for the same amount, the recipe with the lower difference wins.
+					double factor = ing.getAmount() * (1.0 - (difference / 1000.0));
+					//double mod = 0.1 + (0.9 * Math.exp(-0.03 * difference)); // logarithmic curve from 1 to 0.1
+					double mod = 1 + (0.9 * -Math.exp(-0.03 * factor)); // logarithmic curve from 0.1 to 1, small for a low factor
+
+					match *= mod;
+					continue search;
+				}
+			}
+			return 0;
+		}
+		if (items.size() > ingredients.size()) {
+			// If there are too many items in the List, multiply the match by 0.1 per Item that's too much
+			// So that even if every other ingredient is perfect, a recipe that expects all these items will fare better
+			float tooMuch = items.size() - ingredients.size();
+			double mod = Math.pow(0.1, tooMuch);
+			match *= mod;
+		}
+		P.p.debugLog("Match for Cauldron Recipe " + name + ": " + match);
+		return match;
+	}
+
+	public void updateAcceptedLists() {
+		for (RecipeItem ingredient : getIngredients()) {
+			if (ingredient.hasMaterials()) {
+				BCauldronRecipe.acceptedMaterials.addAll(ingredient.getMaterials());
+			}
+			if (ingredient instanceof SimpleItem) {
+				BCauldronRecipe.acceptedSimple.add(((SimpleItem) ingredient).getMaterial());
+			} else {
+				// Add it as acceptedCustom
+				if (!BCauldronRecipe.acceptedCustom.contains(ingredient)) {
+					BCauldronRecipe.acceptedCustom.add(ingredient);
+				}
+			}
+		}
+	}
+
+	@Override
+	public String toString() {
+		return "BCauldronRecipe{" + name + '}';
 	}
 
 	/*public static boolean acceptItem(ItemStack item) {
@@ -326,7 +328,7 @@ public class BCauldronRecipe {
 	 * Builder to easily create BCauldron recipes.
 	 */
 	public static class Builder {
-		private BCauldronRecipe recipe;
+		private final BCauldronRecipe recipe;
 
 		public Builder(String name) {
 			recipe = new BCauldronRecipe(name);

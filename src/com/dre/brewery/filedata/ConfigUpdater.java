@@ -94,7 +94,7 @@ public class ConfigUpdater {
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(file));
 			String currentLine;
-			while((currentLine = reader.readLine()) != null) {
+			while ((currentLine = reader.readLine()) != null) {
 				config.add(currentLine);
 			}
 			reader.close();
@@ -102,7 +102,6 @@ public class ConfigUpdater {
 			e.printStackTrace();
 		}
 	}
-
 
 
 	// ---- Updating Scramble Seed ----
@@ -305,25 +304,25 @@ public class ConfigUpdater {
 
 		// Add the new entries for the Word Distortion above the words section
 		String[] entries = {
-			"# -- Chat Veränderungs Einstellungen --",
-			"",
-			"# Text nach den angegebenen Kommandos wird bei Trunkenheit ebenfalls Verändert (Liste) [- /gl]",
-			"distortCommands:",
-			"- /gl",
-			"- /global",
-			"- /fl",
-			"- /s",
-			"- /letter",
-			"",
-			"# Geschriebenen Text auf Schildern bei Trunkenheit verändern [false]",
-			"distortSignText: false",
-			"",
-			"# Text, der zwischen diesen Buchstaben steht, wird nicht verändert (\",\" als Trennung verwenden) (Liste) [- '[,]']",
-			"distortBypass:",
-			"- '*,*'",
-			"- '[,]'",
-			""
-			};
+				"# -- Chat Veränderungs Einstellungen --",
+				"",
+				"# Text nach den angegebenen Kommandos wird bei Trunkenheit ebenfalls Verändert (Liste) [- /gl]",
+				"distortCommands:",
+				"- /gl",
+				"- /global",
+				"- /fl",
+				"- /s",
+				"- /letter",
+				"",
+				"# Geschriebenen Text auf Schildern bei Trunkenheit verändern [false]",
+				"distortSignText: false",
+				"",
+				"# Text, der zwischen diesen Buchstaben steht, wird nicht verändert (\",\" als Trennung verwenden) (Liste) [- '[,]']",
+				"distortBypass:",
+				"- '*,*'",
+				"- '[,]'",
+				""
+		};
 		index = indexOfStart("# words");
 		if (index == -1) {
 			index = indexOfStart("# Diese werden von oben");
@@ -361,25 +360,25 @@ public class ConfigUpdater {
 
 		// Add the new entries for the Word Distortion above the words section
 		String[] entries = {
-			"# -- Chat Distortion Settings --",
-			"",
-			"# Text after specified commands will be distorted when drunk (list) [- /gl]",
-			"distortCommands:",
-			"- /gl",
-			"- /global",
-			"- /fl",
-			"- /s",
-			"- /letter",
-			"",
-			"# Distort the Text written on a Sign while drunk [false]",
-			"distortSignText: false",
-			"",
-			"# Enclose a text with these Letters to bypass Chat Distortion (Use \",\" as Separator) (list) [- '[,]']",
-			"distortBypass:",
-			"- '*,*'",
-			"- '[,]'",
-			""
-			};
+				"# -- Chat Distortion Settings --",
+				"",
+				"# Text after specified commands will be distorted when drunk (list) [- /gl]",
+				"distortCommands:",
+				"- /gl",
+				"- /global",
+				"- /fl",
+				"- /s",
+				"- /letter",
+				"",
+				"# Distort the Text written on a Sign while drunk [false]",
+				"distortSignText: false",
+				"",
+				"# Enclose a text with these Letters to bypass Chat Distortion (Use \",\" as Separator) (list) [- '[,]']",
+				"distortBypass:",
+				"- '*,*'",
+				"- '[,]'",
+				""
+		};
 		int index = indexOfStart("# words");
 		if (index == -1) {
 			index = indexOfStart("# Will be processed");
@@ -442,7 +441,7 @@ public class ConfigUpdater {
 		}
 
 		// Add Plugin Support Settings
-		lines = new String[] {
+		lines = new String[]{
 				"",
 				"# -- Plugin Kompatiblität --",
 				"",
@@ -505,7 +504,7 @@ public class ConfigUpdater {
 		}
 
 		// Add Plugin Support Settings
-		lines = new String[] {
+		lines = new String[]{
 				"",
 				"# -- Plugin Compatibility --",
 				"",
@@ -554,7 +553,7 @@ public class ConfigUpdater {
 
 		// Add new ingredients description
 		String replacedLine = "# ingredients: Auflistung von 'Material oder ID,Data/Anzahl'";
-		String[] lines = new String[] {
+		String[] lines = new String[]{
 				"#   (Item-ids anstatt Material werden von Bukkit nicht mehr unterstützt und funktionieren möglicherweise in Zukunft nicht mehr!)",
 				"#   Eine Liste von allen Materialien kann hier gefunden werden: http://jd.bukkit.org/beta/apidocs/org/bukkit/Material.html",
 				"#   Es kann ein Data-Wert angegeben werden, weglassen ignoriert diesen beim hinzufügen einer Zutat"
@@ -579,7 +578,7 @@ public class ConfigUpdater {
 
 		// Split the Color explanation into two lines
 		replacedLine = "# color: Farbe des Getränks nach destillieren/reifen.";
-		lines = new String[] {
+		lines = new String[]{
 				"#   Benutzbare Farben: DARK_RED, RED, BRIGHT_RED, ORANGE, PINK, BLUE, CYAN, WATER, GREEN, BLACK, GREY, BRIGHT_GREY"
 		};
 
@@ -597,7 +596,7 @@ public class ConfigUpdater {
 
 		// Add all the new info to the effects description
 		replacedLine = "# effects: Auflistung Effekt/Level/Dauer  Besonderere Trank-Effekte beim Trinken, Dauer in sek.";
-		lines = new String[] {
+		lines = new String[]{
 				"#   Ein 'X' an den Namen anhängen, um ihn zu verbergen. Bsp: 'POISONX/2/10' (WEAKNESS, INCREASE_DAMAGE, SLOW und SPEED sind immer verborgen.)",
 				"#   Mögliche Effekte: http://jd.bukkit.org/rb/apidocs/org/bukkit/potion/PotionEffectType.html",
 				"#   Minimale und Maximale Level/Dauer können durch \"-\" festgelegt werden, Bsp: 'SPEED/1-2/30-40' = Level 1 und 30 sek minimal, Level 2 und 40 sek maximal",
@@ -653,7 +652,7 @@ public class ConfigUpdater {
 
 		// Add new ingredients description
 		String replacedLine = "# ingredients: List of 'material or id,data/amount'";
-		String[] lines = new String[] {
+		String[] lines = new String[]{
 				"#   (Item-ids instead of material are deprecated by bukkit and may not work in the future!)",
 				"#   A list of materials can be found here: http://jd.bukkit.org/beta/apidocs/org/bukkit/Material.html",
 				"#   You can specify a data value, omitting it will ignore the data value of the added ingredient"
@@ -678,7 +677,7 @@ public class ConfigUpdater {
 
 		// Split the Color explanation into two lines
 		replacedLine = "# color: Color of the potion after distilling/aging.";
-		lines = new String[] {
+		lines = new String[]{
 				"#   Usable Colors: DARK_RED, RED, BRIGHT_RED, ORANGE, PINK, BLUE, CYAN, WATER, GREEN, BLACK, GREY, BRIGHT_GREY"
 		};
 
@@ -696,7 +695,7 @@ public class ConfigUpdater {
 
 		// Add all the new info to the effects description
 		replacedLine = "# effects: List of effect/level/duration  Special potion-effect when drinking, duration in sek.";
-		lines = new String[] {
+		lines = new String[]{
 				"#   Suffix name with 'X' to hide effect from label. Sample: 'POISONX/2/10' (WEAKNESS, INCREASE_DAMAGE, SLOW and SPEED are always hidden.)",
 				"#   Possible Effects: http://jd.bukkit.org/rb/apidocs/org/bukkit/potion/PotionEffectType.html",
 				"#   Level or Duration ranges may be specified with a \"-\", ex. 'SPEED/1-2/30-40' = lvl 1 and 30 sec at worst and lvl 2 and 40 sec at best",
@@ -739,10 +738,10 @@ public class ConfigUpdater {
 		updateVersion("1.3.1");
 
 		int index = indexOfStart("# Autosave");
-		String[] lines = new String[] { "# Aktiviert das Suchen nach Updates für Brewery mit der curseforge api [true]",
+		String[] lines = new String[]{"# Aktiviert das Suchen nach Updates für Brewery mit der curseforge api [true]",
 				"# Wenn ein Update gefunden wurde, wird dies bei Serverstart im log angezeigt, sowie ops benachrichtigt",
 				"updateCheck: true",
-				"" };
+				""};
 
 		if (index == -1) {
 			index = indexOfStart("autosave:");
@@ -765,10 +764,10 @@ public class ConfigUpdater {
 		updateVersion("1.3.1");
 
 		int index = indexOfStart("# Autosave");
-		String[] lines = new String[] { "# Enable checking for Updates, Checks the curseforge api for updates to Brewery [true]",
+		String[] lines = new String[]{"# Enable checking for Updates, Checks the curseforge api for updates to Brewery [true]",
 				"# If an Update is found a Message is logged on Server-start and displayed to ops joining the game",
 				"updateCheck: true",
-				"" };
+				""};
 
 		if (index == -1) {
 			index = indexOfStart("autosave:");
@@ -815,10 +814,10 @@ public class ConfigUpdater {
 			setLine(index, "# Das Item kann nicht aufgesammelt werden und bleibt bis zum Despawnen liegen.");
 		}
 
-		String[] lines = new String[] { "",
+		String[] lines = new String[]{"",
 				"# Zeit in Sekunden bis die pukeitems despawnen, (mc standard wäre 300 = 5 min) [60]",
 				"# Wurde die item Despawnzeit in der spigot.yml verändert, verändert sich auch die pukeDespawnzeit in Abhängigkeit.",
-				"pukeDespawntime: 60" };
+				"pukeDespawntime: 60"};
 
 		index = indexOfStart("pukeItem:");
 		if (index == -1) {
@@ -854,8 +853,8 @@ public class ConfigUpdater {
 			setLine(index, "#   Eine Liste von allen Materialien kann hier gefunden werden: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html");
 		}
 
-		lines = new String[] { "#   Wenn Vault installiert ist können normale englische Item Namen verwendet werden, anstatt Material, ID und Data!",
-				"#   Vault erkennt Namen wie \"Jungle Leaves\" anstatt \"LEAVES,3\". Dies macht es viel einfacher!" };
+		lines = new String[]{"#   Wenn Vault installiert ist können normale englische Item Namen verwendet werden, anstatt Material, ID und Data!",
+				"#   Vault erkennt Namen wie \"Jungle Leaves\" anstatt \"LEAVES,3\". Dies macht es viel einfacher!"};
 
 		index = indexOfStart("#   Es kann ein Data-Wert angegeben werden, weglassen");
 		if (index != -1) {
@@ -882,7 +881,7 @@ public class ConfigUpdater {
 			}
 		}
 
-		lines = new String[] { "#   Effekte sind ab der 1.9 immer verborgen, wegen Änderungen an den Tränken." };
+		lines = new String[]{"#   Effekte sind ab der 1.9 immer verborgen, wegen Änderungen an den Tränken."};
 		index = indexOfStart("#   Mögliche Effekte: http://jd.bukkit.org");
 		if (index != -1) {
 			setLine(index, "#   Mögliche Effekte: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/potion/PotionEffectType.html");
@@ -937,10 +936,10 @@ public class ConfigUpdater {
 			setLine(index, "# The item can not be collected and stays on the ground until it despawns.");
 		}
 
-		String[] lines = new String[] { "",
+		String[] lines = new String[]{"",
 				"# Time in seconds until the pukeitems despawn, (mc default is 300 = 5 min) [60]",
 				"# If the item despawn time was changed in the spigot.yml, the pukeDespawntime changes as well.",
-				"pukeDespawntime: 60" };
+				"pukeDespawntime: 60"};
 
 		index = indexOfStart("pukeItem:");
 		if (index == -1) {
@@ -976,8 +975,8 @@ public class ConfigUpdater {
 			setLine(index, "#   A list of materials can be found here: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Material.html");
 		}
 
-		lines = new String[] { "#   If Vault is installed normal names can be used instead of material or id, so using Vault is highly recommended.",
-				"#   Vault will recognize things like \"Jungle Leaves\" instead of \"LEAVES,3\"" };
+		lines = new String[]{"#   If Vault is installed normal names can be used instead of material or id, so using Vault is highly recommended.",
+				"#   Vault will recognize things like \"Jungle Leaves\" instead of \"LEAVES,3\""};
 
 		index = indexOfStart("#   You can specify a data value, omitting");
 		if (index != -1) {
@@ -1004,7 +1003,7 @@ public class ConfigUpdater {
 			}
 		}
 
-		lines = new String[] { "#   Effects are always hidden in 1.9 and newer, because of changes in the potion mechanics." };
+		lines = new String[]{"#   Effects are always hidden in 1.9 and newer, because of changes in the potion mechanics."};
 		index = indexOfStart("#   Possible Effects: http://jd.bukkit.org");
 		if (index != -1) {
 			setLine(index, "#   Possible Effects: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/potion/PotionEffectType.html");
@@ -1035,7 +1034,7 @@ public class ConfigUpdater {
 	private void update14de() {
 		updateVersion("1.5");
 
-		String[] lines = new String[] {"",
+		String[] lines = new String[]{"",
 				"# Ob geschriebener Chat bei großer Trunkenheit abgefälscht werden soll,",
 				"# so dass es etwas betrunken aussieht was geschrieben wird.",
 				"# Wie stark der Chat verändert wird hängt davon ab wie betrunken der Spieler ist",
@@ -1061,7 +1060,7 @@ public class ConfigUpdater {
 			addLines(index - 1, lines);
 		}
 
-		lines = new String[] {"# Also zum Beispiel im Chat: Hallo ich bin betrunken *Ich teste Brewery*"};
+		lines = new String[]{"# Also zum Beispiel im Chat: Hallo ich bin betrunken *Ich teste Brewery*"};
 
 		index = indexOfStart("# Im Chat geschriebener Text, der zwischen");
 		if (index != -1) {
@@ -1073,7 +1072,7 @@ public class ConfigUpdater {
 			}
 		}
 
-		lines = new String[] {"# distilltime: Wie lange (in sekunden) ein Destillations-Durchlauf braucht (0=Standard Zeit von 40 sek) MC Standard wäre 20 sek"};
+		lines = new String[]{"# distilltime: Wie lange (in sekunden) ein Destillations-Durchlauf braucht (0=Standard Zeit von 40 sek) MC Standard wäre 20 sek"};
 
 		index = indexOfStart("# distillruns:");
 		if (index == -1) {
@@ -1107,7 +1106,7 @@ public class ConfigUpdater {
 	private void update14en() {
 		updateVersion("1.5");
 
-		String[] lines = new String[] {"",
+		String[] lines = new String[]{"",
 				"# If written Chat is distorted when the Player is Drunk,",
 				"# so that it looks like drunk writing",
 				"# How much the chat is distorted depends on how drunk the Player is",
@@ -1133,7 +1132,7 @@ public class ConfigUpdater {
 			addLines(index - 1, lines);
 		}
 
-		lines = new String[] {"# Chat Example: Hello i am drunk *I am testing Brewery*"};
+		lines = new String[]{"# Chat Example: Hello i am drunk *I am testing Brewery*"};
 
 		index = indexOfStart("# Enclose a Chat text with these Letters");
 		if (index != -1) {
@@ -1145,7 +1144,7 @@ public class ConfigUpdater {
 			}
 		}
 
-		lines = new String[] {"# distilltime: How long (in seconds) one distill-run takes (0=Default time of 40 sec) MC Default would be 20 sec"};
+		lines = new String[]{"# distilltime: How long (in seconds) one distill-run takes (0=Default time of 40 sec) MC Default would be 20 sec"};
 
 		index = indexOfStart("# distillruns:");
 		if (index == -1) {
@@ -1236,8 +1235,8 @@ public class ConfigUpdater {
 			}
 		}
 		String[] lines = {"",
-			"# Wie viele Brewery Getränke in die Minecraft Fässer getan werden können [6]",
-			"maxBrewsInMCBarrels: 6"};
+				"# Wie viele Brewery Getränke in die Minecraft Fässer getan werden können [6]",
+				"maxBrewsInMCBarrels: 6"};
 		if (index == -1) {
 			appendLines(lines);
 		} else {
@@ -1287,8 +1286,8 @@ public class ConfigUpdater {
 			}
 		}
 		String[] lines = {"",
-			"# How many Brewery drinks can be put into the Minecraft barrels [6]",
-			"maxBrewsInMCBarrels: 6"};
+				"# How many Brewery drinks can be put into the Minecraft barrels [6]",
+				"maxBrewsInMCBarrels: 6"};
 		if (index == -1) {
 			appendLines(lines);
 		} else {
@@ -1326,15 +1325,15 @@ public class ConfigUpdater {
 			removeLine(index);
 		}
 
-		addLinesAt(new String[] {"colorInBrewer:", "colorInBarrels:", "hangoverDays:", "language:"}, 1, "",
+		addLinesAt(new String[]{"colorInBrewer:", "colorInBarrels:", "hangoverDays:", "language:"}, 1, "",
 				"# Ob in den Iteminformationen immer 1-5 Sterne für die Qualität angezeigt werden sollen, oder nur beim brauen [true]",
 				"alwaysShowQuality: true",
 				"",
 				"# Ob in den Iteminformationen immer der Alkoholgehalt angezeigt weden soll, oder nur im Braustand [false]",
 				"alwaysShowAlc: false");
 
-		addLinesAt(new String[] {"maxBrewsInMCBarrels:", "openLargeBarrelEverywhere:", "language:"}, 1, "",
-			"# Benutzte Zutaten und andere Brau-Daten werden in allen Brewery Tränken gespeichert. Um zu verhindern,",
+		addLinesAt(new String[]{"maxBrewsInMCBarrels:", "openLargeBarrelEverywhere:", "language:"}, 1, "",
+				"# Benutzte Zutaten und andere Brau-Daten werden in allen Brewery Tränken gespeichert. Um zu verhindern,",
 				"# dass gehackte clients diese Daten auslesen um Rezepte herauszufinden, können diese encodiert werden.",
 				"# Einziger Nachteil: Tränke können nur auf Servern mit dem gleichen encodeKey benutzt werden.",
 				"# Dies kann also aktiviert werden um Rezept-cheating schwerer zu machen, aber keine Tränke per World Download, Schematic, o.ä. geteilt werden. [false]",
@@ -1343,8 +1342,8 @@ public class ConfigUpdater {
 
 		if (indexOfStart("debug:") == -1) {
 			addLinesAt(new String[]{"autosave:", "version:"}, 1, "",
-				"# Debug Nachrichten im Log anzeigen [false]",
-				"debug: false");
+					"# Debug Nachrichten im Log anzeigen [false]",
+					"debug: false");
 		}
 
 		index = indexOfStart("oldMat:") + 1;
@@ -1370,13 +1369,13 @@ public class ConfigUpdater {
 			removeLine(index);
 			if (P.use1_13) {
 				addLines(index, "    material:",
-					"      - Acacia_Door",
-					"      - Oak_Door",
-					"      - Spruce_Door");
+						"      - Acacia_Door",
+						"      - Oak_Door",
+						"      - Spruce_Door");
 			} else {
 				addLines(index, "    material:",
-					"      - WOODEN_DOOR",
-					"      - IRON_DOOR");
+						"      - WOODEN_DOOR",
+						"      - IRON_DOOR");
 			}
 		}
 
@@ -1390,17 +1389,17 @@ public class ConfigUpdater {
 					index = 0;
 				}
 				addLines(index + 1, "cauldron:");
-				index ++;
+				index++;
 			}
 		}
 		convertCookedSection(yml, index + 1);
 
 		addLinesAt(new String[]{"#   Eine Liste von allen Materialien", "# ingredients:"}, 1,
-			"#   Plugin Items mit 'Plugin:Id' (Im Moment ExoticGarden, Slimefun, MMOItems, Brewery)",
+				"#   Plugin Items mit 'Plugin:Id' (Im Moment ExoticGarden, Slimefun, MMOItems, Brewery)",
 				"#   Oder ein oben definiertes Custom Item");
 
 		addLinesAt(new String[]{"# alcohol:", "# difficulty:", "# ingredients:", "# -- Rezepte"}, 1,
-			"# lore: Auflistung von zusätzlichem Text auf dem fertigen Trank. (Farbcodes möglich: z.b. &6)",
+				"# lore: Auflistung von zusätzlichem Text auf dem fertigen Trank. (Farbcodes möglich: z.b. &6)",
 				"#   Lore nur für bestimmte Qualität möglich mit + Schlecht, ++ Mittel, +++ Gut, vorne anhängen.",
 				"# servercommands: Liste von Befehlen ausgeführt vom Server wenn der Trank getrunken wird",
 				"# playercommands: Liste von Befehlen ausgeführt vom Spieler wenn der Trank getrunken wird",
@@ -1426,26 +1425,26 @@ public class ConfigUpdater {
 			removeLine(index);
 		}
 
-		addLinesAt(new String[] {"colorInBrewer:", "colorInBarrels:", "hangoverDays:", "language:"}, 1, "\n" +
-			"# Toujours montrer les 1-5 étoiles sur les objets en fonction de leur qualité. S'ils sont faux, ils n'apparaîtront que lors de l'infusion. [true]",
-			"alwaysShowQuality: true",
-			"",
-			"# Toujours indiquer la teneur en alcool sur les objets. S'il est false, il n'apparaîtra que dans le stand de brassage. [false]",
-			"alwaysShowAlc: false");
+		addLinesAt(new String[]{"colorInBrewer:", "colorInBarrels:", "hangoverDays:", "language:"}, 1, "\n" +
+						"# Toujours montrer les 1-5 étoiles sur les objets en fonction de leur qualité. S'ils sont faux, ils n'apparaîtront que lors de l'infusion. [true]",
+				"alwaysShowQuality: true",
+				"",
+				"# Toujours indiquer la teneur en alcool sur les objets. S'il est false, il n'apparaîtra que dans le stand de brassage. [false]",
+				"alwaysShowAlc: false");
 
-		addLinesAt(new String[] {"maxBrewsInMCBarrels:", "openLargeBarrelEverywhere:", "language:"}, 1, "",
-			"# Les ingrédients et autres données de brassage utilisés sont sauvegardés dans tous les articles de brasserie. [false]",
-			"# Pour empêcher les clients piratés de lire exactement ce qui a été utilisé pour infuser un élément, les données peuvent être encodées/brouillées.",
-			"# Il s'agit d'un processus rapide pour empêcher les joueurs de pirater des recettes, une fois qu'ils mettent la main sur une bière.",
-			"# Seul inconvénient: Les boissons brassicoles ne peuvent être utilisés que sur un autre serveur avec la même clé de chiffrement.",
-			"# Activez cette option si vous voulez rendre la tricherie des recettes plus difficile, mais ne partagez pas les infusions par téléchargement mondial, schémas ou autres moyens.",
-			"enableEncode: false",
-			"encodeKey: 0");
+		addLinesAt(new String[]{"maxBrewsInMCBarrels:", "openLargeBarrelEverywhere:", "language:"}, 1, "",
+				"# Les ingrédients et autres données de brassage utilisés sont sauvegardés dans tous les articles de brasserie. [false]",
+				"# Pour empêcher les clients piratés de lire exactement ce qui a été utilisé pour infuser un élément, les données peuvent être encodées/brouillées.",
+				"# Il s'agit d'un processus rapide pour empêcher les joueurs de pirater des recettes, une fois qu'ils mettent la main sur une bière.",
+				"# Seul inconvénient: Les boissons brassicoles ne peuvent être utilisés que sur un autre serveur avec la même clé de chiffrement.",
+				"# Activez cette option si vous voulez rendre la tricherie des recettes plus difficile, mais ne partagez pas les infusions par téléchargement mondial, schémas ou autres moyens.",
+				"enableEncode: false",
+				"encodeKey: 0");
 
 		if (indexOfStart("debug:") == -1) {
 			addLinesAt(new String[]{"autosave:", "version:"}, 1, "",
-				"# Show debug messages in log [false]",
-				"debug: false");
+					"# Show debug messages in log [false]",
+					"debug: false");
 		}
 
 		index = indexOfStart("oldMat:") + 1;
@@ -1471,13 +1470,13 @@ public class ConfigUpdater {
 			removeLine(index);
 			if (P.use1_13) {
 				addLines(index, "    material:",
-					"      - Acacia_Door",
-					"      - Oak_Door",
-					"      - Spruce_Door");
+						"      - Acacia_Door",
+						"      - Oak_Door",
+						"      - Spruce_Door");
 			} else {
 				addLines(index, "    material:",
-					"      - WOODEN_DOOR",
-					"      - IRON_DOOR");
+						"      - WOODEN_DOOR",
+						"      - IRON_DOOR");
 			}
 		}
 
@@ -1491,17 +1490,17 @@ public class ConfigUpdater {
 					index = 0;
 				}
 				addLines(index + 1, "cauldron:");
-				index ++;
+				index++;
 			}
 		}
 		convertCookedSection(yml, index + 1);
 
 		addLinesAt(new String[]{"#   Une liste des mat", "# ingredients:"}, 1,
-			"#   Plugin items avec 'plugin:id' (Actuellement supporté ExoticGarden, Slimefun, MMOItems, Brewery)",
+				"#   Plugin items avec 'plugin:id' (Actuellement supporté ExoticGarden, Slimefun, MMOItems, Brewery)",
 				"#   Ou un élément personnalisé défini ci-dessus");
 
 		addLinesAt(new String[]{"# alcohol:", "# difficulty:", "# ingredients:", "# -- Recette "}, 1,
-			"# lore: Liste des textes supplémentaires sur le breuvage fini. (Codes de formatage possibles : tels que &6)",
+				"# lore: Liste des textes supplémentaires sur le breuvage fini. (Codes de formatage possibles : tels que &6)",
 				"#   Texte spécifique de qualité possible, en utilisant + mauvais, ++ normal, +++ bon, ajouté à l'avant de la ligne.",
 				"# servercommands: Liste des commandes exécutées par le serveur lors de la consommation de la potion",
 				"# playercommands: Liste des commandes exécutées par le joueur lors de la consommation de la potion",
@@ -1527,26 +1526,26 @@ public class ConfigUpdater {
 			removeLine(index);
 		}
 
-		addLinesAt(new String[] {"colorInBrewer:", "colorInBarrels:", "hangoverDays:", "language:"}, 1, "",
-			"# Always show the 1-5 stars on the item depending on the quality. If false, they will only appear when brewing [true]",
-			"alwaysShowQuality: true",
-			"",
-			"# Always show the alcohol content on the item. If false, it will only show in the brewing stand [false]",
-			"alwaysShowAlc: false");
+		addLinesAt(new String[]{"colorInBrewer:", "colorInBarrels:", "hangoverDays:", "language:"}, 1, "",
+				"# Always show the 1-5 stars on the item depending on the quality. If false, they will only appear when brewing [true]",
+				"alwaysShowQuality: true",
+				"",
+				"# Always show the alcohol content on the item. If false, it will only show in the brewing stand [false]",
+				"alwaysShowAlc: false");
 
-		addLinesAt(new String[] {"maxBrewsInMCBarrels:", "openLargeBarrelEverywhere:", "language:"}, 1, "",
-			"# The used Ingredients and other brewing-data is saved to all Brewery Items. To prevent",
-			"# hacked clients from reading what exactly was used to brew an item, the data can be encoded/scrambled.",
-			"# This is a fast process to stop players from hacking out recipes, once they get hold of a brew.",
-			"# Only drawback: brew items can only be used on another server with the same encodeKey.",
-			"# So enable this if you want to make recipe cheating harder, but don't share any brews by world download, schematics, or other means. [false]",
-			"enableEncode: false",
-			"encodeKey: 0");
+		addLinesAt(new String[]{"maxBrewsInMCBarrels:", "openLargeBarrelEverywhere:", "language:"}, 1, "",
+				"# The used Ingredients and other brewing-data is saved to all Brewery Items. To prevent",
+				"# hacked clients from reading what exactly was used to brew an item, the data can be encoded/scrambled.",
+				"# This is a fast process to stop players from hacking out recipes, once they get hold of a brew.",
+				"# Only drawback: brew items can only be used on another server with the same encodeKey.",
+				"# So enable this if you want to make recipe cheating harder, but don't share any brews by world download, schematics, or other means. [false]",
+				"enableEncode: false",
+				"encodeKey: 0");
 
 		if (indexOfStart("debug:") == -1) {
 			addLinesAt(new String[]{"autosave:", "version:"}, 1, "",
-				"# Show debug messages in log [false]",
-				"debug: false");
+					"# Show debug messages in log [false]",
+					"debug: false");
 		}
 
 		index = indexOfStart("oldMat:") + 1;
@@ -1572,13 +1571,13 @@ public class ConfigUpdater {
 			removeLine(index);
 			if (P.use1_13) {
 				addLines(index, "    material:",
-					"      - Acacia_Door",
-					"      - Oak_Door",
-					"      - Spruce_Door");
+						"      - Acacia_Door",
+						"      - Oak_Door",
+						"      - Spruce_Door");
 			} else {
 				addLines(index, "    material:",
-					"      - WOODEN_DOOR",
-					"      - IRON_DOOR");
+						"      - WOODEN_DOOR",
+						"      - IRON_DOOR");
 			}
 		}
 
@@ -1592,22 +1591,22 @@ public class ConfigUpdater {
 					index = 0;
 				}
 				addLines(index + 1, "cauldron:");
-				index ++;
+				index++;
 			}
 		}
 		convertCookedSection(yml, index + 1);
 
 		addLinesAt(new String[]{"#   A list of materials", "# ingredients:"}, 1,
-			"#   Plugin items with 'plugin:id' (Currently supporting ExoticGarden, Slimefun, MMOItems, Brewery)",
-			"#   Or a custom item defined above");
+				"#   Plugin items with 'plugin:id' (Currently supporting ExoticGarden, Slimefun, MMOItems, Brewery)",
+				"#   Or a custom item defined above");
 
 		addLinesAt(new String[]{"# alcohol:", "# difficulty:", "# ingredients:", "# -- Recipes"}, 1,
-			"# lore: List of additional text on the finished brew. (Formatting codes possible: such as &6)",
-			"#   Specific lore for quality possible, using + bad, ++ normal, +++ good, added to the front of the line.",
-			"# servercommands: List of Commands executed by the Server when drinking the brew",
-			"# playercommands: List of Commands executed by the Player when drinking the brew",
-			"# drinkmessage: Chat-message to the Player when drinking the Brew",
-			"# drinktitle: Title on Screen to the Player when drinking the Brew");
+				"# lore: List of additional text on the finished brew. (Formatting codes possible: such as &6)",
+				"#   Specific lore for quality possible, using + bad, ++ normal, +++ good, added to the front of the line.",
+				"# servercommands: List of Commands executed by the Server when drinking the brew",
+				"# playercommands: List of Commands executed by the Player when drinking the brew",
+				"# drinkmessage: Chat-message to the Player when drinking the Brew",
+				"# drinktitle: Title on Screen to the Player when drinking the Brew");
 
 		addLinesAt(new String[]{"useGriefPrevention:", "useWorldGuard:", "# -- Plugin Compatibility"}, 1, "useGMInventories: true");
 
@@ -1624,90 +1623,90 @@ public class ConfigUpdater {
 
 	private void update20de() {
 		addLinesAt(new String[]{"hangoverDays", "colorInBrewer", "encodeKey"}, 1, "",
-			"# Ob das craften und das benutzen des Trank-Versiegelungs-Tisches aktiviert ist (2 Flaschen über 4 Holz) [true, true]",
-			"craftSealingTable: true",
-			"enableSealingTable: true");
+				"# Ob das craften und das benutzen des Trank-Versiegelungs-Tisches aktiviert ist (2 Flaschen über 4 Holz) [true, true]",
+				"craftSealingTable: true",
+				"enableSealingTable: true");
 
 		addLinesAt(new String[]{"useLogBlock", "useGMInventories", "# -- Plugin Kompatibli", "# Es gibt noch viele Minecraft Items", "version"}, 1, "", "",
-			"# -- MultiServer/BungeeCord --",
-			"# Wenn Brewery auf mehreren Servern läuft und diese zB mit BungeeCord verbunden sind,",
-			"# sollte hier eine gemeinsame Datenbank eingetragen werden.",
-			"# Dann wird Betrunkenheit auf den Servern synchronisiert und encodierte Tränke können auf allen Servern benutzt werden.",
-			"",
-			"multiServerDB:",
-			"  # Soll die Datenbank-Synchronisation aktiviert sein",
-			"  enabled: false",
-			"  # Soll die Betrunkenheit von Spielern synchronisiert werden",
-			"  syncDrunkeness: true",
-			"  host: localhost",
-			"  port: '3306'",
-			"  user: minec",
-			"  password: xyz",
-			"  database: base",
-			"",
-			"",
-			"# -- Verschiedene weitere Einstellungen --",
-			"",
-			"# Ob Items in der Zweithand auch in den Kessel geworfen werden sollen [false]",
-			"useOffhandForCauldron: false");
+				"# -- MultiServer/BungeeCord --",
+				"# Wenn Brewery auf mehreren Servern läuft und diese zB mit BungeeCord verbunden sind,",
+				"# sollte hier eine gemeinsame Datenbank eingetragen werden.",
+				"# Dann wird Betrunkenheit auf den Servern synchronisiert und encodierte Tränke können auf allen Servern benutzt werden.",
+				"",
+				"multiServerDB:",
+				"  # Soll die Datenbank-Synchronisation aktiviert sein",
+				"  enabled: false",
+				"  # Soll die Betrunkenheit von Spielern synchronisiert werden",
+				"  syncDrunkeness: true",
+				"  host: localhost",
+				"  port: '3306'",
+				"  user: minec",
+				"  password: xyz",
+				"  database: base",
+				"",
+				"",
+				"# -- Verschiedene weitere Einstellungen --",
+				"",
+				"# Ob Items in der Zweithand auch in den Kessel geworfen werden sollen [false]",
+				"useOffhandForCauldron: false");
 	}
 
 	private void update20fr() {
 		addLinesAt(new String[]{"hangoverDays", "colorInBrewer", "encodeKey"}, 1, "",
-			"# If crafting and using of the Brew Sealing Table is enabled (2 Bottles over 4 Planks) [true, true]",
-			"craftSealingTable: true",
-			"enableSealingTable: true");
+				"# If crafting and using of the Brew Sealing Table is enabled (2 Bottles over 4 Planks) [true, true]",
+				"craftSealingTable: true",
+				"enableSealingTable: true");
 
 		addLinesAt(new String[]{"useLogBlock", "useGMInventories", "# -- Compatibilit", "# There are a lot of items in Minecraft ", "version"}, 1, "", "",
-			"# -- MultiServer/BungeeCord --",
-			"# Si Brewery est exécuté sur plusieurs serveurs connectés (via BungeeCord), une base de données partagée peut être utilisée",
-			"# ici pour synchroniser l'ivresse et pour pouvoir utiliser des boissons codées entre elles.",
-			"",
-			"multiServerDB:",
-			"  # Si l'utilisation de la base de données est activée",
-			"  enabled: false",
-			"  # Si l'ivresse des joueurs devait être synchronisée entre les serveurs",
-			"  syncDrunkeness: true",
-			"  host: localhost",
-			"  port: '3306'",
-			"  user: minec",
-			"  password: xyz",
-			"  database: base",
-			"",
-			"",
-			"# -- Divers autres paramètres --",
-			"",
-			"# If items in Offhand should be added to the cauldron as well [false]",
-			"useOffhandForCauldron: false");
+				"# -- MultiServer/BungeeCord --",
+				"# Si Brewery est exécuté sur plusieurs serveurs connectés (via BungeeCord), une base de données partagée peut être utilisée",
+				"# ici pour synchroniser l'ivresse et pour pouvoir utiliser des boissons codées entre elles.",
+				"",
+				"multiServerDB:",
+				"  # Si l'utilisation de la base de données est activée",
+				"  enabled: false",
+				"  # Si l'ivresse des joueurs devait être synchronisée entre les serveurs",
+				"  syncDrunkeness: true",
+				"  host: localhost",
+				"  port: '3306'",
+				"  user: minec",
+				"  password: xyz",
+				"  database: base",
+				"",
+				"",
+				"# -- Divers autres paramètres --",
+				"",
+				"# If items in Offhand should be added to the cauldron as well [false]",
+				"useOffhandForCauldron: false");
 	}
 
 	private void update20en() {
 		addLinesAt(new String[]{"hangoverDays", "colorInBrewer", "encodeKey"}, 1, "",
-			"# If crafting and using of the Brew Sealing Table is enabled (2 Bottles over 4 Planks) [true, true]",
-			"craftSealingTable: true",
-			"enableSealingTable: true");
+				"# If crafting and using of the Brew Sealing Table is enabled (2 Bottles over 4 Planks) [true, true]",
+				"craftSealingTable: true",
+				"enableSealingTable: true");
 
 		addLinesAt(new String[]{"useLogBlock", "useGMInventories", "# -- Plugin Compatibility", "# # There are a lot of items in Minecraft", "version"}, 1, "", "",
-			"# -- MultiServer/BungeeCord --",
-			"# If Brewery is running on multiple connected Servers (via BungeeCord)",
-			"# a shared Database can be used here to synchronise drunkeness and to be able to use encoded brews between them.",
-			"",
-			"multiServerDB:",
-			"  # If using the Database is enabled",
-			"  enabled: false",
-			"  # If the drunkeness of players should be synchronised between Servers",
-			"  syncDrunkeness: true",
-			"  host: localhost",
-			"  port: '3306'",
-			"  user: minec",
-			"  password: xyz",
-			"  database: base",
-			"",
-			"",
-			"# -- Various Other Settings --",
-			"",
-			"# If items in Offhand should be added to the cauldron as well [false]",
-			"useOffhandForCauldron: false");
+				"# -- MultiServer/BungeeCord --",
+				"# If Brewery is running on multiple connected Servers (via BungeeCord)",
+				"# a shared Database can be used here to synchronise drunkeness and to be able to use encoded brews between them.",
+				"",
+				"multiServerDB:",
+				"  # If using the Database is enabled",
+				"  enabled: false",
+				"  # If the drunkeness of players should be synchronised between Servers",
+				"  syncDrunkeness: true",
+				"  host: localhost",
+				"  port: '3306'",
+				"  user: minec",
+				"  password: xyz",
+				"  database: base",
+				"",
+				"",
+				"# -- Various Other Settings --",
+				"",
+				"# If items in Offhand should be added to the cauldron as well [false]",
+				"useOffhandForCauldron: false");
 	}
 
 	private void update21de() {
@@ -1724,10 +1723,10 @@ public class ConfigUpdater {
 		}
 
 		addLinesAt(new String[]{"# Hier kann angegeben werden welche Zutaten in den Kessel getan werden können"}, 1,
-			"# Es braucht nur etwas hier eingetragen werden falls der Basistrank besondere Eigenschaften wie Name und Farbe haben soll");
+				"# Es braucht nur etwas hier eingetragen werden falls der Basistrank besondere Eigenschaften wie Name und Farbe haben soll");
 
 		addLinesAt(new String[]{" # lore:", " # ingredients:"}, 1,
-			" # customModelData: Custom Model Data Modelldaten. Mit dieser Zahl kann die Tranktextur mit einem Resourcepack geändert werden");
+				" # customModelData: Custom Model Data Modelldaten. Mit dieser Zahl kann die Tranktextur mit einem Resourcepack geändert werden");
 
 		index = indexOfStart("# servercommands: Liste von Befehlen ausgeführt vom Server wenn");
 		if (index != -1) {
@@ -1739,12 +1738,12 @@ public class ConfigUpdater {
 		}
 
 		addLinesAt(new String[]{"# drinktitle:", "# drinkmessage:", "# playercommands:", "# alcohol:"}, 1,
-			"# customModelData: Custom Model Data Modelldaten. Mit dieser Zahl kann die Tranktextur mit einem Resourcepack geändert werden",
-			"#   Es kann eine für alle, oder drei für die qualitäten schlecht/normal/gut agegeben werden, mit / getrennt");
+				"# customModelData: Custom Model Data Modelldaten. Mit dieser Zahl kann die Tranktextur mit einem Resourcepack geändert werden",
+				"#   Es kann eine für alle, oder drei für die qualitäten schlecht/normal/gut agegeben werden, mit / getrennt");
 
 		addLinesAt(new String[]{"useOffhandForCauldron:", "# -- Verschiedene weitere Einstellungen", "# -- Plugin Kompatiblit"}, 1, "",
-			"# Of Fass- und Kesseldaten Async/im Hintergrund geladen werden können [true]",
-			"loadDataAsync: true");
+				"# Of Fass- und Kesseldaten Async/im Hintergrund geladen werden können [true]",
+				"loadDataAsync: true");
 
 	}
 
@@ -1762,10 +1761,10 @@ public class ConfigUpdater {
 		}
 
 		addLinesAt(new String[]{"# Quels sont les ingrédients acceptés par le chaudron"}, 1,
-			"# Il vous suffit d'ajouter quelque chose ici si vous voulez spécifier un nom ou une couleur pour la potion de base");
+				"# Il vous suffit d'ajouter quelque chose ici si vous voulez spécifier un nom ou une couleur pour la potion de base");
 
 		addLinesAt(new String[]{" # lore:", " # ingredients:"}, 1,
-			" # customModelData: Custom Model Data Tag. This is a number that can be used to add custom textures to the item.");
+				" # customModelData: Custom Model Data Tag. This is a number that can be used to add custom textures to the item.");
 
 		index = indexOfStart("# servercommands: Liste des commandes exécutées par le serveur");
 		if (index != -1) {
@@ -1777,12 +1776,12 @@ public class ConfigUpdater {
 		}
 
 		addLinesAt(new String[]{"# drinktitle:", "# drinkmessage:", "# playercommands:", "# alcohol:"}, 1,
-			"# customModelData: Custom Model Data Tag. This is a number that can be used to add custom textures to the item.",
-			"#   Can specify one for all, or one for each quality, separated by /");
+				"# customModelData: Custom Model Data Tag. This is a number that can be used to add custom textures to the item.",
+				"#   Can specify one for all, or one for each quality, separated by /");
 
 		addLinesAt(new String[]{"useOffhandForCauldron:", "# -- Divers autres param", "# -- Compatibilité entre Plugins"}, 1, "",
-			"# If Barrel and Cauldron data can be loaded Async/in the Background [true]",
-			"loadDataAsync: true");
+				"# If Barrel and Cauldron data can be loaded Async/in the Background [true]",
+				"loadDataAsync: true");
 
 	}
 
@@ -1800,10 +1799,10 @@ public class ConfigUpdater {
 		}
 
 		addLinesAt(new String[]{"# Which Ingredients are accepted by the Cauldron and the base potion resulting"}, 1,
-			"# You only need to add something here if you want to specify a custom name or color for the base potion");
+				"# You only need to add something here if you want to specify a custom name or color for the base potion");
 
 		addLinesAt(new String[]{" # lore:", " # ingredients:"}, 1,
-			" # customModelData: Custom Model Data Tag. This is a number that can be used to add custom textures to the item.");
+				" # customModelData: Custom Model Data Tag. This is a number that can be used to add custom textures to the item.");
 
 		index = indexOfStart("# servercommands: List of Commands executed by the Server when drinking");
 		if (index != -1) {
@@ -1815,12 +1814,12 @@ public class ConfigUpdater {
 		}
 
 		addLinesAt(new String[]{"# drinktitle:", "# drinkmessage:", "# playercommands:", "# alcohol:"}, 1,
-			"# customModelData: Custom Model Data Tag. This is a number that can be used to add custom textures to the item.",
-			"#   Can specify one for all, or one for each quality, separated by /");
+				"# customModelData: Custom Model Data Tag. This is a number that can be used to add custom textures to the item.",
+				"#   Can specify one for all, or one for each quality, separated by /");
 
 		addLinesAt(new String[]{"useOffhandForCauldron:", "# -- Various Other Settings", "# -- Plugin Compatibility"}, 1, "",
-			"# If Barrel and Cauldron data can be loaded Async/in the Background [true]",
-			"loadDataAsync: true");
+				"# If Barrel and Cauldron data can be loaded Async/in the Background [true]",
+				"loadDataAsync: true");
 
 	}
 
@@ -1834,71 +1833,71 @@ public class ConfigUpdater {
 
 		List<Tuple<String[], String[]>> additions = new ArrayList<>();
 		additions.add(new Tuple<>(
-			new String[]{"  ex:", "  bsp:"},
-			new String[]{c, "      - 'RED/5'", "      - 'WHITE/10'", "      - '800000/25' # maroon"}));
+				new String[]{"  ex:", "  bsp:"},
+				new String[]{c, "      - 'RED/5'", "      - 'WHITE/10'", "      - '800000/25' # maroon"}));
 		additions.add(new Tuple<>(
-			new String[]{"  wheat:", "  wheat:"},
-			new String[]{c, "      - '2d8686/8' # Dark Aqua"}));
+				new String[]{"  wheat:", "  wheat:"},
+				new String[]{c, "      - '2d8686/8' # Dark Aqua"}));
 		additions.add(new Tuple<>(
-			new String[]{"  sugarcane:"},
-			new String[]{c, "      - 'f1ffad/4'","      - '858547/10' # dark olive"}));
+				new String[]{"  sugarcane:"},
+				new String[]{c, "      - 'f1ffad/4'", "      - '858547/10' # dark olive"}));
 		additions.add(new Tuple<>(
-			new String[]{"  sugar:"},
-			new String[]{c, "      - 'WHITE/4'", "      - 'BRIGHT_GREY/25'"}));
+				new String[]{"  sugar:"},
+				new String[]{c, "      - 'WHITE/4'", "      - 'BRIGHT_GREY/25'"}));
 		additions.add(new Tuple<>(
-			new String[]{"  berries:"},
-			new String[]{c, "      - 'ff6666/2' # bright red", "      - 'RED/7'", "      - 'ac6553/13' # brown-red"}));
+				new String[]{"  berries:"},
+				new String[]{c, "      - 'ff6666/2' # bright red", "      - 'RED/7'", "      - 'ac6553/13' # brown-red"}));
 		additions.add(new Tuple<>(
-			new String[]{"  grass:"},
-			new String[]{c, "      - 'GREEN/2'", "      - '99ff99/20' # faded green"}));
+				new String[]{"  grass:"},
+				new String[]{c, "      - 'GREEN/2'", "      - '99ff99/20' # faded green"}));
 		additions.add(new Tuple<>(
-			new String[]{"  rmushroom:"},
-			new String[]{c, "      - 'fab09e/15' # faded red"}));
+				new String[]{"  rmushroom:"},
+				new String[]{c, "      - 'fab09e/15' # faded red"}));
 		additions.add(new Tuple<>(
-			new String[]{"  bmushroom:"},
-			new String[]{c, "      - 'c68c53/15'"}));
+				new String[]{"  bmushroom:"},
+				new String[]{c, "      - 'c68c53/15'"}));
 		additions.add(new Tuple<>(
-			new String[]{"  cocoa:"},
-			new String[]{c, "      - 'a26011/1'", "      - '5c370a/3'", "      - '4d4133/8' # Gray-brown"}));
+				new String[]{"  cocoa:"},
+				new String[]{c, "      - 'a26011/1'", "      - '5c370a/3'", "      - '4d4133/8' # Gray-brown"}));
 		additions.add(new Tuple<>(
-			new String[]{"  milk:"},
-			new String[]{c, "      - 'fbfbd0/1' # yellow-white", "      - 'WHITE/6'"}));
+				new String[]{"  milk:"},
+				new String[]{c, "      - 'fbfbd0/1' # yellow-white", "      - 'WHITE/6'"}));
 		additions.add(new Tuple<>(
-			new String[]{"  bl_flow:"},
-			new String[]{c, "      - '0099ff'"}));
+				new String[]{"  bl_flow:"},
+				new String[]{c, "      - '0099ff'"}));
 		additions.add(new Tuple<>(
-			new String[]{"  cactus:"},
-			new String[]{c, "      - '00b300/16'"}));
+				new String[]{"  cactus:"},
+				new String[]{c, "      - '00b300/16'"}));
 		additions.add(new Tuple<>(
-			new String[]{"  vine:"},
-			new String[]{c, "      - 'GREEN/2'", "      - '99ff99/20' # faded green"}));
+				new String[]{"  vine:"},
+				new String[]{c, "      - 'GREEN/2'", "      - '99ff99/20' # faded green"}));
 		additions.add(new Tuple<>(
-			new String[]{"  rot_flesh:"},
-			new String[]{c, "      - '263300/8'", "      - 'BLACK/20'"}));
+				new String[]{"  rot_flesh:"},
+				new String[]{c, "      - '263300/8'", "      - 'BLACK/20'"}));
 		additions.add(new Tuple<>(
-			new String[]{"  cookie:"},
-			new String[]{c, "      - 'a26011/1'", "      - '5c370a/3'", "      - '4d4133/8' # Gray-brown"}));
+				new String[]{"  cookie:"},
+				new String[]{c, "      - 'a26011/1'", "      - '5c370a/3'", "      - '4d4133/8' # Gray-brown"}));
 		additions.add(new Tuple<>(
-			new String[]{"  Gold_Nugget:"},
-			new String[]{c, "      - 'ffd11a'"}));
+				new String[]{"  Gold_Nugget:"},
+				new String[]{c, "      - 'ffd11a'"}));
 		additions.add(new Tuple<>(
-			new String[]{"  glowstone_dust:"},
-			new String[]{c, "      - 'ffff99/3'", "      - 'd9d926/15' # faded yellow"}));
+				new String[]{"  glowstone_dust:"},
+				new String[]{c, "      - 'ffff99/3'", "      - 'd9d926/15' # faded yellow"}));
 		additions.add(new Tuple<>(
-			new String[]{"  applemead_base:", "  apfelmet_basis:"},
-			new String[]{c, "      - 'e1ff4d/4'"}));
+				new String[]{"  applemead_base:", "  apfelmet_basis:"},
+				new String[]{c, "      - 'e1ff4d/4'"}));
 		additions.add(new Tuple<>(
-			new String[]{"  poi_grass:"},
-			new String[]{c, "      - 'GREEN/2'", "      - '99ff99/20' # faded green"}));
+				new String[]{"  poi_grass:"},
+				new String[]{c, "      - 'GREEN/2'", "      - '99ff99/20' # faded green"}));
 		additions.add(new Tuple<>(
-			new String[]{"  juniper:"},
-			new String[]{c, "      - '00ccff/8'"}));
+				new String[]{"  juniper:"},
+				new String[]{c, "      - '00ccff/8'"}));
 		additions.add(new Tuple<>(
-			new String[]{"  gin_base:"},
-			new String[]{c, "      - 'c68c53/15'"}));
+				new String[]{"  gin_base:"},
+				new String[]{c, "      - 'c68c53/15'"}));
 		additions.add(new Tuple<>(
-			new String[]{"  eggnog_base:"},
-			new String[]{c, "      - 'ffecb3/2'"}));
+				new String[]{"  eggnog_base:"},
+				new String[]{c, "      - 'ffecb3/2'"}));
 
 
 		for (Tuple<String[], String[]> addition : additions) {
@@ -1927,19 +1926,19 @@ public class ConfigUpdater {
 
 	private void update30de() {
 		addLinesAt(new String[]{"pukeDespawntime:", "enableKickOnOverdrink:", "language:"}, 1,
-			"",
+				"",
 				"# Wie stark in Prozent der Spieler taumelt, je nach dem wie viel Alkohol er getrunken hat. Kann auf 0 und höher als 100 gesetzt werden",
 				"stumblePercent: 100",
 				"",
 				"# Ob seine Betrunkenheit dem Spieler kurz angezeigt werden soll wenn er etwas trinkt oder ein drainItem isst. [true]",
 				"showStatusOnDrink: true");
 		addLinesAt(new String[]{"hangoverDays:", "enableSealingTable:", "showStatusOnDrink:"}, 1,
-			"",
+				"",
 				"# Partikel steigen von Kesseln auf wenn sie Zutaten und eine Feuerquelle haben [true]",
 				"# Die sich ändernde Farbe der Partikel kann beim Fermentieren mancher Rezepte helfen",
 				"enableCauldronParticles: true");
 		addLinesAt(new String[]{" #   Oder RGB Farben", " #   Eine Liste von allen Materialien", " # lore: Auflistung von zusätzlichem Text"}, 1,
-			" # cookParticles:",
+				" # cookParticles:",
 				" #   Farbe der Partikel über dem Kessel während verschiedener Kochzeiten",
 				" #   Farbe und Minute während die Farbe erscheinen soll. Z.B. eine Farbe bei 8 Minuten, übergehend zu einer anderen bei 18 minuten",
 				" #   Als Liste, jede Farbe als Name oder RGB wie oben. Geschrieben 'Farbe/Minute'",
@@ -1949,40 +1948,40 @@ public class ConfigUpdater {
 			setLine(index, "# wood: Holz des Fasses 0=alle Holzsorten 1=Birke 2=Eiche 3=Jungel 4=Fichte 5=Akazie 6=Schwarzeiche 7=Karmesin 8=Wirr");
 		}
 		addLinesAt(new String[]{"# playercommands: Liste von Befehlen ausgeführt vom -Spieler-", "# drinktitle: Nachricht als Titel"}, 1, false,
-			"#   Befehle nur für bestimmte Qualität möglich mit + Schlecht, ++ Mittel, +++ Gut, vorne anhängen.");
+				"#   Befehle nur für bestimmte Qualität möglich mit + Schlecht, ++ Mittel, +++ Gut, vorne anhängen.");
 		addLinesAt(new String[]{"# Andere Plugins (wenn installiert) nach Rechten zum öffnen von Fässern checken"}, 1, false,
-			"# Plugins 'Landlord' und 'Protection Stones' nutzen WorldGuard. 'ClaimChunk' wird nativ unterstützt.");
+				"# Plugins 'Landlord' und 'Protection Stones' nutzen WorldGuard. 'ClaimChunk' wird nativ unterstützt.");
 		addLinesAt(new String[]{"useGriefPrevention:", "useLWC:", "useWorldGuard:"}, 1,
-			"useTowny: true",
+				"useTowny: true",
 				"useBlockLocker: true");
 		addLinesAt(new String[]{"useGMInventories:", "# Plugins 'Landlord' und 'Prote", "# -- Plugin Kompatiblität --"}, 1,
-			"",
+				"",
 				"# Beim Fass öffnen eine virtuelle Kiste nutzen um Rechte bei allen anderen Plugins abzufragen",
 				"# Könnte Anti-Cheat plugins verwirren aber sonst ok zu aktivieren",
 				"# Diese Option für das Plugin 'Residence' aktivieren, und andere Plugins, die nicht alle Fälle des PlayerInteractEvent checken",
 				"useVirtualChestPerms: false",
 				"");
 		addLinesAt(new String[]{"loadDataAsync:", "useOffhandForCauldron:", "# -- Verschiedene weitere", "useLogBlock:"}, 1,
-			"",
-			"# Ob nur ein Minimum an Kessel-Partikeln dargestellt werden sollen [false]",
-			"minimalParticles: false");
+				"",
+				"# Ob nur ein Minimum an Kessel-Partikeln dargestellt werden sollen [false]",
+				"minimalParticles: false");
 	}
 
 	private void update30en() {
 		addLinesAt(new String[]{"pukeDespawntime:", "enableKickOnOverdrink:", "language:"}, 1,
-			"",
+				"",
 				"# How much the Player stumbles depending on the amount of alcohol he drank. Can be set to 0 and higher than 100 [100]",
 				"stumblePercent: 100",
 				"",
 				"# Display his drunkeness to the player when he drinks a brew or eats a drainItem [true]",
 				"showStatusOnDrink: true");
 		addLinesAt(new String[]{"hangoverDays:", "enableSealingTable:", "showStatusOnDrink:"}, 1,
-			"",
+				"",
 				"# Show Particles over Cauldrons when they have ingredients and a heat source. [true]",
 				"# The changing color of the particles can help with timing some recipes",
 				"enableCauldronParticles: true");
 		addLinesAt(new String[]{" #   Or RGB colors", " #   A list of materials can be found", " # lore: "}, 1,
-			" # cookParticles:",
+				" # cookParticles:",
 				" #   Color of the Particles above the cauldron at different cooking-times",
 				" #   Color and minute during which each color should appear, i.e. one color at 8 minutes fading to another at 18 minutes.",
 				" #   As List, each Color as name or RGB, see above. Written as 'Color/Minute'",
@@ -1992,39 +1991,38 @@ public class ConfigUpdater {
 			setLine(index, "# wood: Wood of the barrel 0=any 1=Birch 2=Oak 3=Jungle 4=Spruce 5=Acacia 6=Dark Oak 7=Crimson 8=Warped");
 		}
 		addLinesAt(new String[]{"# playercommands: "}, 1, false,
-			"#   Specific Commands for quality possible, using + bad, ++ normal, +++ good, added to the front of the line.");
+				"#   Specific Commands for quality possible, using + bad, ++ normal, +++ good, added to the front of the line.");
 		addLinesAt(new String[]{"# Enable checking of other Plugins (if installed) for"}, 1, false,
-			"# Plugins 'Landlord' and 'Protection Stones' use the WorldGuard Flag. 'ClaimChunk' is natively supported.");
+				"# Plugins 'Landlord' and 'Protection Stones' use the WorldGuard Flag. 'ClaimChunk' is natively supported.");
 		addLinesAt(new String[]{"useGriefPrevention:", "useLWC:", "useWorldGuard:"}, 1,
-			"useTowny: true",
+				"useTowny: true",
 				"useBlockLocker: true");
 		addLinesAt(new String[]{"useGMInventories:", "# Plugins 'Landlord' and 'Protectio", "# -- Plugin Compatibility --"}, 1,
-			"",
+				"",
 				"# Use a virtual chest when opening a Barrel to check with all other protection plugins",
 				"# This could confuse Anti-Cheat plugins, but is otherwise good to use",
 				"# use this for 'Residence' Plugin and any others that don't check all cases in the PlayerInteractEvent",
 				"useVirtualChestPerms: false",
 				"");
 		addLinesAt(new String[]{"loadDataAsync:", "useOffhandForCauldron:", "# -- Various Other Settings", "useLogBlock:"}, 1,
-			"",
+				"",
 				"# If Cauldron Particles should be reduced to the bare minimum [false]",
 				"minimalParticles: false");
 	}
 
 	private void update31en() {
 		addLinesAt(new String[]{"minimalParticles:", "loadDataAsync:", "openLargeBarrelEverywhere:", "colorInBrewer:"}, 1,
-			"",
-			"# Allow emptying brews into hoppers to discard brews while keeping the glass bottle [true]",
-			"brewHopperDump: true");
+				"",
+				"# Allow emptying brews into hoppers to discard brews while keeping the glass bottle [true]",
+				"brewHopperDump: true");
 	}
 
 	private void update31de() {
 		addLinesAt(new String[]{"minimalParticles:", "loadDataAsync:", "openLargeBarrelEverywhere:", "colorInBrewer:"}, 1,
-			"",
-			"# Ob das Entleeren von Brewery Tränken mit Hilfe von Trichtern möglich ist, um die Glasflasche zurück zu bekommen [true]",
-			"brewHopperDump: true");
+				"",
+				"# Ob das Entleeren von Brewery Tränken mit Hilfe von Trichtern möglich ist, um die Glasflasche zurück zu bekommen [true]",
+				"brewHopperDump: true");
 	}
-
 
 
 	private void convertCookedSection(FileConfiguration yml, int toLine) {
@@ -2033,11 +2031,11 @@ public class ConfigUpdater {
 			for (String ing : cookedSection.getKeys(false)) {
 				String name = cookedSection.getString(ing);
 				addLines(toLine,
-					"  " + ing.toLowerCase() + ":",
-				"    name: " + name,
-				"    ingredients:",
-				"      - " + ing,
-				"");
+						"  " + ing.toLowerCase() + ":",
+						"    name: " + name,
+						"    ingredients:",
+						"      - " + ing,
+						"");
 				toLine += 5;
 			}
 
@@ -2059,7 +2057,7 @@ public class ConfigUpdater {
 			List<String> patch = new ArrayList<>();
 			BufferedReader reader = new BufferedReader(new InputStreamReader(Objects.requireNonNull(P.p.getResource(resourcePath), "Resource not found")));
 			String currentLine;
-			while((currentLine = reader.readLine()) != null) {
+			while ((currentLine = reader.readLine()) != null) {
 				patch.add(currentLine);
 			}
 			reader.close();

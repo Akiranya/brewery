@@ -73,7 +73,7 @@ public class BConfig {
 	public static boolean enableCauldronParticles;
 	public static boolean minimalParticles;
 
-	//BPlayer
+	// BPlayer
 	public static Map<Material, Integer> drainItems = new HashMap<>();// DrainItem Material and Strength
 	public static Material pukeItem;
 	public static boolean showStatusOnDrink;
@@ -87,7 +87,7 @@ public class BConfig {
 	public static String homeType;
 	public static boolean enableWake;
 
-	//Brew
+	// Brew
 	public static boolean colorInBarrels; // color the Lore while in Barrels
 	public static boolean colorInBrewer; // color the Lore while in Brewer
 	public static boolean enableEncode;
@@ -95,14 +95,14 @@ public class BConfig {
 	public static boolean alwaysShowAlc; // Always show alc%
 	public static boolean brewHopperDump; // Allow Dumping of Brew liquid into Hoppers
 
-	//Features
+	// Features
 	public static boolean craftSealingTable; // Allow Crafting of Sealing Table
 	public static boolean enableSealingTable; // Allow Usage of Sealing Table
 
-	//Item
+	// Item
 	public static List<RecipeItem> customItems = new ArrayList<>();
 
-	//MySQL
+	// MySQL
 	public static String sqlHost, sqlPort, sqlDB;
 	public static SQLSync sqlSync;
 	public static boolean sqlDrunkSync;
@@ -139,10 +139,10 @@ public class BConfig {
 	private static void copyDefaultConfigs(boolean overwrite) {
 		File configs = new File(p.getDataFolder(), "configs");
 		File languages = new File(p.getDataFolder(), "languages");
-		for (String l : new String[] {"de", "en", "fr", "it", "zh", "tw"}) {
-			File lfold = new File(configs, l);
+		for (String l : new String[]{"de", "en", "fr", "it", "zh", "tw"}) {
+			File lFold = new File(configs, l);
 			try {
-				BUtil.saveFile(p.getResource("config/" + (P.use1_13 ? "v13/" : "v12/") + l + "/config.yml"), lfold, "config.yml", overwrite);
+				BUtil.saveFile(p.getResource("config/" + (P.use1_13 ? "v13/" : "v12/") + l + "/config.yml"), lFold, "config.yml", overwrite);
 				BUtil.saveFile(p.getResource("languages/" + l + ".yml"), languages, l + ".yml", false); // Never overwrite languages, they get updated with their updater
 			} catch (IOException e) {
 				if (!(l.equals("zh") || l.equals("tw"))) {
@@ -221,7 +221,7 @@ public class BConfig {
 		hasPAPI = plMan.isPluginEnabled("PlaceholderAPI");
 
 		// various Settings
-		DataSave.autosave = config.getInt("autosave", 3);
+		DataSave.autoSave = config.getInt("autosave", 3);
 		P.debug = config.getBoolean("debug", false);
 		pukeItem = Material.matchMaterial(config.getString("pukeItem", "SOUL_SAND"));
 		hangoverTime = config.getInt("hangoverDays", 0) * 24 * 60;
@@ -266,21 +266,21 @@ public class BConfig {
 		PluginItem.registerForConfig("exoticgarden", SlimefunPluginItem::new);
 		PluginItem.registerForConfig("itemsadder", ItemsAdderPluginItem::new);
 
-		// Loading custom items
+		// Loading Custom Items
 		ConfigurationSection configSection = config.getConfigurationSection("customItems");
 		if (configSection != null) {
-			for (String custId : configSection.getKeys(false)) {
-				RecipeItem custom = RecipeItem.fromConfigCustom(configSection, custId);
+			for (String customId : configSection.getKeys(false)) {
+				RecipeItem custom = RecipeItem.fromConfigCustom(configSection, customId);
 				if (custom != null) {
 					custom.makeImmutable();
 					customItems.add(custom);
 				} else {
-					p.errorLog("Loading the Custom Item with id: '" + custId + "' failed!");
+					p.errorLog("Loading the Custom Item with id: '" + customId + "' failed!");
 				}
 			}
 		}
 
-		// loading recipes
+		// Loading Recipes
 		configSection = config.getConfigurationSection("recipes");
 		if (configSection != null) {
 			List<BRecipe> configRecipes = BRecipe.getConfigRecipes();
@@ -318,7 +318,7 @@ public class BConfig {
 			recipe.updateAcceptedLists();
 		}
 
-		// loading drainItems
+		// Loading drainItems
 		List<String> drainList = config.getStringList("drainItems");
 		for (String drainString : drainList) {
 			String[] drainSplit = drainString.split("/");
@@ -395,7 +395,7 @@ public class BConfig {
 			}
 		}
 
-		// init SQL
+		// Init SQL
 		if (sqlSync != null) {
 			try {
 				sqlSync.closeConnection();
@@ -423,7 +423,5 @@ public class BConfig {
 		// The Config was reloaded, call Event
 		ConfigLoadEvent event = new ConfigLoadEvent();
 		P.p.getServer().getPluginManager().callEvent(event);
-
-
 	}
 }

@@ -16,9 +16,9 @@ import java.util.Objects;
 import java.util.Set;
 
 public class LanguageReader {
-	private Map<String, String> entries = new HashMap<>(128);
+	private final Map<String, String> entries = new HashMap<>(128);
 
-	private File file;
+	private final File file;
 
 	public LanguageReader(File file, String defaultPath) {
 		/* Load */

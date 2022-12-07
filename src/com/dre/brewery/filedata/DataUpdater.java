@@ -14,17 +14,15 @@ import java.util.Map;
 
 public class DataUpdater {
 
-	private FileConfiguration data;
-	private File file;
-	private File worldFile;
+	private final FileConfiguration data;
+	private final File file;
+	private final File worldFile;
 
 	public DataUpdater(FileConfiguration data, File file, File worldFile) {
 		this.data = data;
 		this.file = file;
 		this.worldFile = worldFile;
 	}
-
-
 
 	public void update(String fromVersion) {
 		if (fromVersion.equalsIgnoreCase("1.0")) {
@@ -42,9 +40,6 @@ public class DataUpdater {
 			e.printStackTrace();
 		}
 	}
-
-
-
 
 	public void update10() {
 

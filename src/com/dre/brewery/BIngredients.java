@@ -3,12 +3,7 @@ package com.dre.brewery;
 import com.dre.brewery.api.events.brew.BrewModifyEvent;
 import com.dre.brewery.lore.Base91EncoderStream;
 import com.dre.brewery.lore.BrewLore;
-import com.dre.brewery.recipe.BCauldronRecipe;
-import com.dre.brewery.recipe.BRecipe;
-import com.dre.brewery.recipe.Ingredient;
-import com.dre.brewery.recipe.ItemLoader;
-import com.dre.brewery.recipe.RecipeItem;
-import com.dre.brewery.recipe.PotionColor;
+import com.dre.brewery.recipe.*;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
@@ -33,15 +28,15 @@ public class BIngredients {
 	private int cookedTime;
 
 	/**
-	 * Init a new BIngredients
- 	 */
+	 * Init a new BIngredients.
+	 */
 	public BIngredients() {
 		//this.id = lastId;
 		//lastId++;
 	}
 
 	/**
-	 * Load from File
+	 * Loads from File.
 	 */
 	public BIngredients(List<Ingredient> ingredients, int cookedTime) {
 		this.ingredients = ingredients;
@@ -51,8 +46,8 @@ public class BIngredients {
 	}
 
 	/**
-	 * Load from legacy Brew section
- 	 */
+	 * Loads from legacy Brew section.
+	 */
 	public BIngredients(List<Ingredient> ingredients, int cookedTime, boolean legacy) {
 		this(ingredients, cookedTime);
 		if (legacy) {
@@ -61,9 +56,30 @@ public class BIngredients {
 		}
 	}
 
+	public static BIngredients load(DataInputStream in, short dataVersion) throws IOException {
+		int cookedTime = in.readInt();
+		byte size = in.readByte();
+		List<Ingredient> ing = new ArrayList<>(size);
+		for (; size > 0; size--) {
+			ItemLoader itemLoader = new ItemLoader(dataVersion, in, in.readUTF());
+			if (!P.p.ingredientLoaders.containsKey(itemLoader.getSaveID())) {
+				P.p.errorLog("Ingredient Loader not found: " + itemLoader.getSaveID());
+				break;
+			}
+			Ingredient loaded = P.p.ingredientLoaders.get(itemLoader.getSaveID()).apply(itemLoader);
+			int amount = in.readShort();
+			if (loaded != null) {
+				loaded.setAmount(amount);
+				ing.add(loaded);
+			}
+		}
+		return new BIngredients(ing, cookedTime);
+	}
+
 	/**
-	 * Force add an ingredient to this.
-	 * <p>Will not check if item is acceptable
+	 * Force adds an ingredient to this.
+	 *
+	 * <p>Will not check if item is acceptable.
 	 *
 	 * @param ingredient the item to add
 	 */
@@ -81,11 +97,11 @@ public class BIngredients {
 	}
 
 	/**
-	 * Add an ingredient to this with corresponding RecipeItem
+	 * Adds an ingredient to this with corresponding RecipeItem.
 	 *
 	 * @param ingredient the item to add
-	 * @param rItem the RecipeItem that matches the ingredient
- 	 */
+	 * @param rItem      the RecipeItem that matches the ingredient
+	 */
 	public void add(ItemStack ingredient, RecipeItem rItem) {
 		Ingredient ingredientItem = rItem.toIngredient(ingredient);
 		for (Ingredient existing : ingredients) {
@@ -99,7 +115,7 @@ public class BIngredients {
 	}
 
 	/**
-	 * returns an Potion item with cooked ingredients
+	 * Returns a Potion item with cooked ingredients.
 	 */
 	public ItemStack cook(int state) {
 
@@ -118,9 +134,9 @@ public class BIngredients {
 		if (cookRecipe != null) {
 			// Potion is best with cooking only
 			int quality = (int) Math.round((getIngredientQuality(cookRecipe) + getCookingQuality(cookRecipe, false)) / 2.0);
-			int alc = (int) Math.round(cookRecipe.getAlcohol() * ((float) quality / 10.0f));
-			P.p.debugLog("cooked potion has Quality: " + quality + ", Alc: " + alc);
-			brew = new Brew(quality, alc, cookRecipe, this);
+			int alcohol = (int) Math.round(cookRecipe.getAlcohol() * ((float) quality / 10.0f));
+			P.p.debugLog("Cooked potion has Quality: " + quality + ", Alc: " + alcohol);
+			brew = new Brew(quality, alcohol, cookRecipe, this);
 			BrewLore lore = new BrewLore(brew, potionMeta);
 			lore.updateQualityStars(false);
 			lore.updateCustomLore();
@@ -164,8 +180,8 @@ public class BIngredients {
 
 		potionMeta.setDisplayName(P.p.color("&f" + cookedName));
 		//if (!P.use1_14) {
-			// Before 1.14 the effects duration would strangely be only a quarter of what we tell it to be
-			// This is due to the Duration Modifier, that is removed in 1.14
+		// Before 1.14 the effect duration would strangely be only a quarter of what we tell it to be
+		// This is due to the Duration Modifier, that is removed in 1.14
 		//	uid *= 4;
 		//}
 		// This effect stores the UID in its Duration
@@ -185,7 +201,7 @@ public class BIngredients {
 	}
 
 	/**
-	 * returns amount of ingredients
+	 * Returns amount of ingredients.
 	 */
 	public int getIngredientsCount() {
 		int count = 0;
@@ -204,7 +220,7 @@ public class BIngredients {
 	}
 
 	/**
-	 * best recipe for current state of potion, STILL not always returns the correct one...
+	 * Best recipe for current state of potion, STILL not always returns the correct one...
 	 */
 	public BRecipe getBestRecipe(float wood, float time, boolean distilled) {
 		float quality = 0;
@@ -223,7 +239,7 @@ public class BIngredients {
 					ageQuality = getAgeQuality(recipe, time);
 					woodQuality = getWoodQuality(recipe, wood);
 					P.p.debugLog("Ingredient Quality: " + ingredientQuality + " Cooking Quality: " + cookingQuality +
-						" Wood Quality: " + woodQuality + " age Quality: " + ageQuality + " for " + recipe.getName(5));
+							" Wood Quality: " + woodQuality + " age Quality: " + ageQuality + " for " + recipe.getName(5));
 
 					// is this recipe better than the previous best?
 					if ((((float) ingredientQuality + cookingQuality + woodQuality + ageQuality) / 4) > quality) {
@@ -241,13 +257,13 @@ public class BIngredients {
 			}
 		}
 		if (bestRecipe != null) {
-			P.p.debugLog("best recipe: " + bestRecipe.getName(5) + " has Quality= " + quality);
+			P.p.debugLog("Best recipe: " + bestRecipe.getName(5) + " has Quality= " + quality);
 		}
 		return bestRecipe;
 	}
 
 	/**
-	 * returns recipe that is cooking only and matches the ingredients and cooking time
+	 * Returns recipe that is cooking only and matches the ingredients and cooking time.
 	 */
 	public BRecipe getCookRecipe() {
 		BRecipe bestRecipe = getBestRecipe(0, 0, false);
@@ -262,7 +278,7 @@ public class BIngredients {
 	}
 
 	/**
-	 * Get Cauldron Recipe that matches the contents of the cauldron
+	 * Returns Cauldron Recipe that matches the contents of the cauldron.
 	 */
 	@Nullable
 	public BCauldronRecipe getCauldronRecipe() {
@@ -283,12 +299,12 @@ public class BIngredients {
 	}
 
 	/**
-	 * returns the currently best matching recipe for distilling for the ingredients and cooking time
+	 * Returns the currently best matching recipe for distilling for the ingredients and cooking time.
 	 */
 	public BRecipe getDistillRecipe(float wood, float time) {
 		BRecipe bestRecipe = getBestRecipe(wood, time, true);
 
-		// Check if best recipe needs to be destilled
+		// Check if best recipe needs to be distilled
 		if (bestRecipe != null) {
 			if (bestRecipe.needsDistilling()) {
 				return bestRecipe;
@@ -298,7 +314,7 @@ public class BIngredients {
 	}
 
 	/**
-	 * returns currently best matching recipe for ingredients, cooking- and ageingtime
+	 * Returns currently best matching recipe for ingredients, cooking- and ageing time.
 	 */
 	public BRecipe getAgeRecipe(float wood, float time, boolean distilled) {
 		BRecipe bestRecipe = getBestRecipe(wood, time, distilled);
@@ -312,7 +328,7 @@ public class BIngredients {
 	}
 
 	/**
-	 * returns the quality of the ingredients conditioning given recipe, -1 if no recipe is near them
+	 * Returns the quality of the ingredients conditioning given recipe, -1 if no recipe is near them.
 	 */
 	public int getIngredientQuality(BRecipe recipe) {
 		float quality = 10;
@@ -326,9 +342,9 @@ public class BIngredients {
 			int amountInRecipe = recipe.amountOf(ingredient);
 			count = ingredient.getAmount();
 			if (amountInRecipe == 0) {
-				// this ingredient doesnt belong into the recipe
+				// this ingredient doesn't belong into the recipe
 				if (count > (getIngredientsCount() / 2)) {
-					// when more than half of the ingredients dont fit into the
+					// when more than half of the ingredients don't fit into the
 					// recipe
 					return -1;
 				}
@@ -338,7 +354,7 @@ public class BIngredients {
 					quality -= count * (recipe.getDifficulty() / 2.0);
 					continue;
 				} else {
-					// ingredients dont fit at all
+					// ingredients don't fit at all
 					return -1;
 				}
 			}
@@ -352,7 +368,7 @@ public class BIngredients {
 	}
 
 	/**
-	 * returns the quality regarding the cooking-time conditioning given Recipe
+	 * Returns the quality regarding the cooking-time conditioning given Recipe.
 	 */
 	public int getCookingQuality(BRecipe recipe, boolean distilled) {
 		if (!recipe.needsDistilling() == distilled) {
@@ -370,7 +386,7 @@ public class BIngredients {
 	}
 
 	/**
-	 * returns pseudo quality of distilling. 0 if doesnt match the need of the recipes distilling
+	 * Returns pseudo quality of distilling. 0 if it doesn't match the need of the recipes distilling.
 	 */
 	public int getDistillQuality(BRecipe recipe, byte distillRuns) {
 		if (recipe.needsDistilling() != distillRuns > 0) {
@@ -380,11 +396,11 @@ public class BIngredients {
 	}
 
 	/**
-	 * returns the quality regarding the barrel wood conditioning given Recipe
+	 * Returns the quality regarding the barrel wood conditioning given Recipe.
 	 */
 	public int getWoodQuality(BRecipe recipe, float wood) {
 		if (recipe.getWood() == 0) {
-			// type of wood doesnt matter
+			// type of wood doesn't matter
 			return 10;
 		}
 		int quality = 10 - Math.round(recipe.getWoodDiff(wood) * recipe.getDifficulty());
@@ -393,7 +409,7 @@ public class BIngredients {
 	}
 
 	/**
-	 * returns the quality regarding the ageing time conditioning given Recipe
+	 * Returns the quality regarding the ageing time conditioning given Recipe.
 	 */
 	public int getAgeQuality(BRecipe recipe, float time) {
 		int quality = 10 - Math.round(Math.abs(time - recipe.getAge()) * ((float) recipe.getDifficulty() / 2));
@@ -418,13 +434,6 @@ public class BIngredients {
 		return copy;
 	}
 
-	@Override
-	public String toString() {
-		return "BIngredients{" +
-				"cookedTime=" + cookedTime +
-				", total ingredients: " + getIngredientsCount() + '}';
-	}
-
 	/*public void testStore(DataOutputStream out) throws IOException {
 		out.writeInt(cookedTime);
 		out.writeByte(ingredients.size());
@@ -437,7 +446,7 @@ public class BIngredients {
 
 	public void testLoad(DataInputStream in) throws IOException {
 		if (in.readInt() != cookedTime) {
-			P.p.log("cookedtime wrong");
+			P.p.log("cooked time wrong");
 		}
 		if (in.readUnsignedByte() != ingredients.size()) {
 			P.p.log("size wrong");
@@ -456,6 +465,13 @@ public class BIngredients {
 		}
 	}*/
 
+	@Override
+	public String toString() {
+		return "BIngredients{" +
+				"cookedTime=" + cookedTime +
+				", total ingredients: " + getIngredientsCount() + '}';
+	}
+
 	public void save(DataOutputStream out) throws IOException {
 		out.writeInt(cookedTime);
 		out.writeByte(ingredients.size());
@@ -463,26 +479,6 @@ public class BIngredients {
 			ing.saveTo(out);
 			out.writeShort(Math.min(ing.getAmount(), Short.MAX_VALUE));
 		}
-	}
-
-	public static BIngredients load(DataInputStream in, short dataVersion) throws IOException {
-		int cookedTime = in.readInt();
-		byte size = in.readByte();
-		List<Ingredient> ing = new ArrayList<>(size);
-		for (; size > 0; size--) {
-			ItemLoader itemLoader = new ItemLoader(dataVersion, in, in.readUTF());
-			if (!P.p.ingredientLoaders.containsKey(itemLoader.getSaveID())) {
-				P.p.errorLog("Ingredient Loader not found: " + itemLoader.getSaveID());
-				break;
-			}
-			Ingredient loaded = P.p.ingredientLoaders.get(itemLoader.getSaveID()).apply(itemLoader);
-			int amount = in.readShort();
-			if (loaded != null) {
-				loaded.setAmount(amount);
-				ing.add(loaded);
-			}
-		}
-		return new BIngredients(ing, cookedTime);
 	}
 
 	// saves data into main Ingredient section. Returns the save id

@@ -16,8 +16,9 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * Minecraft Item with custon name and lore.
- * <p>Mostly used for Custom Items of the Config, but also for general custom items
+ * Minecraft Item with custom name and lore.
+ *
+ * <p>Mostly used for Custom Items of the Config, but also for general custom items.
  */
 public class CustomItem extends RecipeItem implements Ingredient {
 
@@ -51,6 +52,35 @@ public class CustomItem extends RecipeItem implements Ingredient {
 		if (itemMeta.hasLore()) {
 			lore = itemMeta.getLore();
 		}
+	}
+
+	public static CustomItem loadFrom(ItemLoader loader) {
+		try {
+			DataInputStream in = loader.getInputStream();
+			CustomItem item = new CustomItem();
+			if (in.readBoolean()) {
+				item.mat = Material.getMaterial(in.readUTF());
+			}
+			if (in.readBoolean()) {
+				item.name = in.readUTF();
+			}
+			short size = in.readShort();
+			if (size > 0) {
+				item.lore = new ArrayList<>(size);
+				for (short i = 0; i < size; i++) {
+					item.lore.add(in.readUTF());
+				}
+			}
+			return item;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	// Needs to be called at Server start
+	public static void registerItemLoader(P p) {
+		p.registerForItemLoader("CI", CustomItem::loadFrom);
 	}
 
 	@Override
@@ -124,7 +154,7 @@ public class CustomItem extends RecipeItem implements Ingredient {
 				// If this is a custom item with more info, we don't want to match a simple item
 				return hasMaterials() && !hasLore() && !hasName() && getMaterial() == ((SimpleItem) rItem).getMaterial();
 			} else if (rItem instanceof CustomItem) {
-				// If the other is a CustomItem as well and not Similar to ours, it might have more data and we still match
+				// If the other is a CustomItem as well and not Similar to ours, it might have more data, and we still match
 				CustomItem other = ((CustomItem) rItem);
 				if (mat == null || mat == other.mat) {
 					if (!hasName() || (other.name != null && name.equalsIgnoreCase(other.name))) {
@@ -185,10 +215,10 @@ public class CustomItem extends RecipeItem implements Ingredient {
 				}
 				String usedLine = usedLore.get(lastIndex);
 				if (line.equalsIgnoreCase(usedLine) || line.equalsIgnoreCase(ChatColor.stripColor(usedLine))) {
-					// If the line is correct, we have found our first and we want all consecutive lines to also equal
+					// If the line is correct, we have found our first, and we want all consecutive lines to also equal
 					foundFirst = true;
 				} else if (foundFirst) {
-					// If a consecutive line is not equal, thats bad
+					// If a consecutive line is not equal, that's bad
 					return false;
 				}
 				lastIndex++;
@@ -228,11 +258,11 @@ public class CustomItem extends RecipeItem implements Ingredient {
 	@Override
 	public String toString() {
 		return "CustomItem{" +
-			"id=" + getConfigId() +
-			", mat=" + (mat != null ? mat.name().toLowerCase() : "null") +
-			", name='" + name + '\'' +
-			", loresize: " + (lore != null ? lore.size() : 0) +
-			'}';
+				"id=" + getConfigId() +
+				", mat=" + (mat != null ? mat.name().toLowerCase() : "null") +
+				", name='" + name + '\'' +
+				", loreSize: " + (lore != null ? lore.size() : 0) +
+				'}';
 	}
 
 	@Override
@@ -259,34 +289,5 @@ public class CustomItem extends RecipeItem implements Ingredient {
 		} else {
 			out.writeShort(0);
 		}
-	}
-
-	public static CustomItem loadFrom(ItemLoader loader) {
-		try {
-			DataInputStream in = loader.getInputStream();
-			CustomItem item = new CustomItem();
-			if (in.readBoolean()) {
-				item.mat = Material.getMaterial(in.readUTF());
-			}
-			if (in.readBoolean()) {
-				item.name = in.readUTF();
-			}
-			short size = in.readShort();
-			if (size > 0) {
-				item.lore = new ArrayList<>(size);
-				for (short i = 0; i < size; i++) {
-					item.lore.add(in.readUTF());
-				}
-			}
-			return item;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	// Needs to be called at Server start
-	public static void registerItemLoader(P p) {
-		p.registerForItemLoader("CI", CustomItem::loadFrom);
 	}
 }

@@ -17,10 +17,11 @@ import java.util.stream.Collectors;
 
 /**
  * Item that can be used in a Recipe.
- * <p>They are not necessarily only loaded from config
- * <p>They are immutable if used in a recipe. If one implements Ingredient,
- * it can be used as mutable copy directly in a
- * BIngredients. Otherwise it needs to be converted to an Ingredient
+ *
+ * <p>They are not necessarily only loaded from config.
+ *
+ * <p>They are immutable if used in a recipe. If one implements Ingredient, it can be used as mutable copy directly in a
+ * {@link com.dre.brewery.BIngredients}. Otherwise, it needs to be converted to an Ingredient.
  */
 public abstract class RecipeItem implements Cloneable {
 
@@ -28,110 +29,13 @@ public abstract class RecipeItem implements Cloneable {
 	private int amount;
 	private boolean immutable = false;
 
-
 	/**
-	 * Does this RecipeItem match the given ItemStack?
-	 * <p>Used to determine if the given item corresponds to this recipeitem
-	 *
-	 * @param item The ItemStack for comparison
-	 * @return True if the given item matches this recipeItem
-	 */
-	public abstract boolean matches(ItemStack item);
-
-	/**
-	 * Does this Item match the given Ingredient?
-	 * <p>A RecipeItem matches an Ingredient if all required info of the RecipeItem are fulfilled on the Ingredient
-	 * <br>This does not imply that the same holds the other way round, as the ingredient item might have more info than needed
-	 *
-	 *
-	 * @param ingredient The ingredient that needs to fulfill the requirements
-	 * @return True if the ingredient matches the required info of this
-	 */
-	public abstract boolean matches(Ingredient ingredient);
-
-	/**
-	 * Get the Corresponding Ingredient Item. For Items implementing Ingredient, just getMutableCopy()
-	 * <p>This is called when this recipe item is added to a BIngredients
-	 *
-	 * @param forItem The ItemStack that has previously matched this RecipeItem. Used if the resulting Ingredient needs more info from the ItemStack
-	 * @return The IngredientItem corresponding to this RecipeItem
-	 */
-	@NotNull
-	public abstract Ingredient toIngredient(ItemStack forItem);
-
-	/**
-	 * Gets a Generic Ingredient for this recipe item
-	 */
-	@NotNull
-	public abstract Ingredient toIngredientGeneric();
-
-	/**
-	 * @return True if this recipeItem has one or more materials that could classify an item. if true, getMaterials() is NotNull
-	 */
-	public abstract boolean hasMaterials();
-
-	/**
-	 * @return List of one or more Materials this recipeItem uses.
-	 */
-	@Nullable
-	public abstract List<Material> getMaterials();
-
-	/**
-	 * @return The Id this Item uses in the config in the custom-items section
-	 */
-	@Nullable
-	public String getConfigId() {
-		return cfgId;
-	}
-
-	/**
-	 * @return The Amount of this Item in a Recipe
-	 */
-	public int getAmount() {
-		return amount;
-	}
-
-	/**
-	 * Set the Amount of this Item in a Recipe.
-	 * <p>The amount can not be set on an existing item in a recipe or existing custom item.
-	 * <br>To change amount you need to use getMutableCopy() and change the amount on the copy
-	 *
-	 * @param amount The new amount
-	 */
-	public void setAmount(int amount) {
-		if (immutable) throw new IllegalStateException("Setting amount only possible on mutable copy");
-		this.amount = amount;
-	}
-
-	/**
-	 * Makes this Item immutable, for example when loaded from config. Used so if this is added to BIngredients,
-	 * it needs to be cloned before changing anything like amount
-	 */
-	public void makeImmutable() {
-		immutable = true;
-	}
-
-	/**
-	 * Gets a shallow clone of this RecipeItem whose fields like amount can be changed.
-	 *
-	 * @return A mutable copy of this
-	 */
-	public RecipeItem getMutableCopy() {
-		try {
-			RecipeItem i = (RecipeItem) super.clone();
-			i.immutable = false;
-			return i;
-		} catch (CloneNotSupportedException e) {
-			throw new InternalError(e);
-		}
-	}
-
-	/**
-	 * Tries to find a matching RecipeItem for this item. It checks custom items and if it has found a unique custom item
-	 * it will return that. If there are multiple matching custom items, a new CustomItem with all item info is returned.
+	 * Tries to find a matching RecipeItem for this item. It checks custom items and if it has found a unique custom
+	 * item it will return that. If there are multiple matching custom items, a new CustomItem with all item info is
+	 * returned.
 	 * <br>If there is no matching CustomItem, it will return a SimpleItem with the items type
 	 *
-	 * @param item The Item for which to find a matching RecipeItem
+	 * @param item      The Item for which to find a matching RecipeItem
 	 * @param acceptAll If true it will accept any item and return a SimpleItem even if not on the accepted list
 	 *                  <br>If false it will return null if the item is not acceptable by the Cauldron
 	 * @return The Matched CustomItem, new CustomItem with all item info or SimpleItem
@@ -145,7 +49,7 @@ public abstract class RecipeItem implements Cloneable {
 			// If we already have a multi match, only check if there is a PluginItem that matches more strictly
 			if (!multiMatch || (ri instanceof PluginItem)) {
 				if (ri.matches(item)) {
-					// If we match a plugin item, thats a very strict match, so immediately return it
+					// If we match a plugin item, that's a very strict match, so immediately return it
 					if (ri instanceof PluginItem) {
 						return ri;
 					}
@@ -279,14 +183,113 @@ public abstract class RecipeItem implements Cloneable {
 		return materials;
 	}
 
+	/**
+	 * Does this RecipeItem match the given ItemStack?
+	 * <p>Used to determine if the given item corresponds to this recipeitem
+	 *
+	 * @param item The ItemStack for comparison
+	 * @return True if the given item matches this recipeItem
+	 */
+	public abstract boolean matches(ItemStack item);
+
+	/**
+	 * Does this Item match the given Ingredient?
+	 * <p>A RecipeItem matches an Ingredient if all required info of the RecipeItem are fulfilled on the Ingredient
+	 * <br>This does not imply that the same holds the other way round, as the ingredient item might have more info than
+	 * needed
+	 *
+	 * @param ingredient The ingredient that needs to fulfill the requirements
+	 * @return True if the ingredient matches the required info of this
+	 */
+	public abstract boolean matches(Ingredient ingredient);
+
+	/**
+	 * Get the Corresponding Ingredient Item. For Items implementing Ingredient, just getMutableCopy()
+	 * <p>This is called when this recipe item is added to a BIngredients
+	 *
+	 * @param forItem The ItemStack that has previously matched this RecipeItem. Used if the resulting Ingredient needs
+	 *                more info from the ItemStack
+	 * @return The IngredientItem corresponding to this RecipeItem
+	 */
+	@NotNull
+	public abstract Ingredient toIngredient(ItemStack forItem);
+
+	/**
+	 * Gets a Generic Ingredient for this recipe item
+	 */
+	@NotNull
+	public abstract Ingredient toIngredientGeneric();
+
+	/**
+	 * @return True if this recipeItem has one or more materials that could classify an item. if true, getMaterials() is
+	 * NotNull
+	 */
+	public abstract boolean hasMaterials();
+
+	/**
+	 * @return List of one or more Materials this recipeItem uses.
+	 */
+	@Nullable
+	public abstract List<Material> getMaterials();
+
+	/**
+	 * @return The Id this Item uses in the config in the custom-items section
+	 */
+	@Nullable
+	public String getConfigId() {
+		return cfgId;
+	}
+
+	/**
+	 * @return The Amount of this Item in a Recipe
+	 */
+	public int getAmount() {
+		return amount;
+	}
+
+	/**
+	 * Set the Amount of this Item in a Recipe.
+	 * <p>The amount can not be set on an existing item in a recipe or existing custom item.
+	 * <br>To change amount you need to use getMutableCopy() and change the amount on the copy
+	 *
+	 * @param amount The new amount
+	 */
+	public void setAmount(int amount) {
+		if (immutable) throw new IllegalStateException("Setting amount only possible on mutable copy");
+		this.amount = amount;
+	}
+
+	/**
+	 * Makes this Item immutable, for example when loaded from config. Used so if this is added to BIngredients, it
+	 * needs to be cloned before changing anything like amount
+	 */
+	public void makeImmutable() {
+		immutable = true;
+	}
+
+	/**
+	 * Gets a shallow clone of this RecipeItem whose fields like amount can be changed.
+	 *
+	 * @return A mutable copy of this
+	 */
+	public RecipeItem getMutableCopy() {
+		try {
+			RecipeItem i = (RecipeItem) super.clone();
+			i.immutable = false;
+			return i;
+		} catch (CloneNotSupportedException e) {
+			throw new InternalError(e);
+		}
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (!(o instanceof RecipeItem)) return false;
 		RecipeItem that = (RecipeItem) o;
 		return amount == that.amount &&
-			immutable == that.immutable &&
-			Objects.equals(cfgId, that.cfgId);
+				immutable == that.immutable &&
+				Objects.equals(cfgId, that.cfgId);
 	}
 
 	@Override
@@ -296,6 +299,6 @@ public abstract class RecipeItem implements Cloneable {
 
 	@Override
 	public String toString() {
-		return "RecipeItem{(" + getClass().getSimpleName() + ") ID: " + getConfigId() + " Materials: " + (hasMaterials() ? getMaterials().size() : 0) + " Amount: " + getAmount();
+		return "RecipeItem{(" + getClass().getSimpleName() + ") ConfigID: " + getConfigId() + " Materials: " + (hasMaterials() ? getMaterials().size() : 0) + " Amount: " + getAmount() + "}";
 	}
 }

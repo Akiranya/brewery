@@ -30,16 +30,16 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 public class BPlayer {
-	private static Map<String, BPlayer> players = new HashMap<>();// Players uuid and BPlayer
-	private static Map<Player, Integer> pTasks = new HashMap<>();// Player and count
+	private static final Map<String, BPlayer> players = new HashMap<>(); // Players uuid and BPlayer
+	private static final Map<Player, Integer> pTasks = new HashMap<>(); // Player and count
 	private static int taskId;
 	private static Random pukeRand;
 
 	private final String uuid;
-	private int quality = 0;// = quality of drunkeness * drunkeness
-	private int drunkeness = 0;// = amount of drunkeness
-	private int offlineDrunk = 0;// drunkeness when gone offline
-	private int alcRecovery = -1; // Drunkeness reduce per minute
+	private int quality = 0; // = quality of drunkenness * drunkenness
+	private int drunkenness = 0; // = amount of drunkenness
+	private int offlineDrunk = 0; // drunkenness when gone offline
+	private int alcRecovery = -1; // drunkenness reduce per minute
 	private Vector push = new Vector(0, 0, 0);
 	private int time = 20;
 
@@ -48,9 +48,9 @@ public class BPlayer {
 	}
 
 	// reading from file
-	public BPlayer(String uuid, int quality, int drunkeness, int offlineDrunk) {
+	public BPlayer(String uuid, int quality, int drunkenness, int offlineDrunk) {
 		this.quality = quality;
-		this.drunkeness = drunkeness;
+		this.drunkenness = drunkenness;
 		this.offlineDrunk = offlineDrunk;
 		this.uuid = uuid;
 		players.put(uuid, this);
@@ -85,16 +85,14 @@ public class BPlayer {
 	}
 
 	// This method may be slow and should not be used if not needed
-	public static boolean hasPlayerbyName(String playerName) {
+	public static boolean hasPlayerByName(String playerName) {
 		if (P.useUUID) {
 			for (Map.Entry<String, BPlayer> entry : players.entrySet()) {
 				OfflinePlayer p = P.p.getServer().getOfflinePlayer(UUID.fromString(entry.getKey()));
-				if (p != null) {
-					String name = p.getName();
-					if (name != null) {
-						if (name.equalsIgnoreCase(playerName)) {
-							return true;
-						}
+				String name = p.getName();
+				if (name != null) {
+					if (name.equalsIgnoreCase(playerName)) {
+						return true;
 					}
 				}
 			}
@@ -133,19 +131,6 @@ public class BPlayer {
 		return players.size();
 	}
 
-	public void remove() {
-		for (Iterator<Map.Entry<String, BPlayer>> iterator = players.entrySet().iterator(); iterator.hasNext(); ) {
-			Map.Entry<String, BPlayer> entry = iterator.next();
-			if (entry.getValue() == this) {
-				if (BConfig.sqlDrunkSync && BConfig.sqlSync != null) {
-					BConfig.sqlSync.removePlayer(UUID.fromString(entry.getKey()));
-				}
-				iterator.remove();
-				return;
-			}
-		}
-	}
-
 	public static void clear() {
 		players.clear();
 	}
@@ -161,7 +146,7 @@ public class BPlayer {
 		if (meta != null) {
 			P.p.getServer().getPluginManager().callEvent(drinkEvent);
 			if (drinkEvent.isCancelled()) {
-				if (bPlayer.drunkeness <= 0) {
+				if (bPlayer.drunkenness <= 0) {
 					bPlayer.remove();
 				}
 				return false;
@@ -182,7 +167,7 @@ public class BPlayer {
 			// If the Drink has negative alcohol, drain some alcohol
 			bPlayer.drain(player, -brewAlc);
 		} else if (brewAlc > 0) {
-			bPlayer.drunkeness += brewAlc;
+			bPlayer.drunkenness += brewAlc;
 			if (quality > 0) {
 				bPlayer.quality += quality * brewAlc;
 			} else {
@@ -192,18 +177,18 @@ public class BPlayer {
 			applyEffects(getQualityEffects(quality, brewAlc), player, PlayerEffectEvent.EffectType.QUALITY);
 		}
 
-		if (bPlayer.drunkeness > 100) {
+		if (bPlayer.drunkenness > 100) {
 			bPlayer.drinkCap(player);
 		}
 
 		if (BConfig.showStatusOnDrink) {
 			// Only show the Player his drunkeness if he is already drunk, or this drink changed his drunkeness
-			if (brewAlc != 0 || bPlayer.drunkeness > 0) {
+			if (brewAlc != 0 || bPlayer.drunkenness > 0) {
 				bPlayer.showDrunkeness(player);
 			}
 		}
 
-		if (bPlayer.drunkeness <= 0) {
+		if (bPlayer.drunkenness <= 0) {
 			bPlayer.remove();
 		} else {
 			bPlayer.syncToSQL(false);
@@ -211,351 +196,11 @@ public class BPlayer {
 		return true;
 	}
 
-	/**
-	 * Show the Player his current drunkeness and quality as an Actionbar graphic or when unsupported, in chat
-	 */
-	public void showDrunkeness(Player player) {
-		try {
-			// It this returns false, then the Action Bar is not supported. Do not repeat the message as it was sent into chat
-			if (sendDrunkenessMessage(player)) {
-				P.p.getServer().getScheduler().scheduleSyncDelayedTask(P.p, () -> sendDrunkenessMessage(player), 40);
-				P.p.getServer().getScheduler().scheduleSyncDelayedTask(P.p, () -> sendDrunkenessMessage(player), 80);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Send one Message to the player, showing his drunkeness or hangover
-	 *
-	 * @param player The Player to send the message to
-	 * @return false if the message should not be repeated.
-	 */
-	public boolean sendDrunkenessMessage(Player player) {
-		StringBuilder b = new StringBuilder(100);
-
-		int strength = drunkeness;
-		boolean hangover = false;
-		if (offlineDrunk > 0) {
-			strength = offlineDrunk;
-			hangover = true;
-		}
-
-		b.append(P.p.languageReader.get(hangover ? "Player_Hangover" : "Player_Drunkeness"));
-
-		// Drunkeness or Hangover Strength Bars
-		b.append(": §7[");
-		// Show 25 Bars, color one per 4 drunkeness
-		int bars;
-		if (strength <= 0) {
-			bars = 0;
-		} else if (strength == 1) {
-			bars = 1;
-		} else {
-			bars = Math.round(strength / 4.0f);
-		}
-		int noBars = 25 - bars;
-		if (bars > 0) {
-			b.append(hangover ? "§c" : "§6");
-		}
-		for (int addedBars = 0; addedBars < bars; addedBars++) {
-			b.append("|");
-			if (addedBars == 20) {
-				// color the last 4 bars red
-				b.append("§c");
-			}
-		}
-		if (noBars > 0) {
-			b.append("§0");
-			for (; noBars > 0; noBars--) {
-				b.append("|");
-			}
-		}
-		b.append("§7] ");
-
-
-		int quality;
-		if (hangover) {
-			quality = 11 - getHangoverQuality();
-		} else {
-			quality = strength > 0 ? getQuality() : 0;
-		}
-
-		// Quality Stars
-		int stars = quality / 2;
-		boolean half = quality % 2 > 0;
-		int noStars = 5 - stars - (half ? 1 : 0);
-
-		b.append("§7[").append(BrewLore.getQualityColor(quality));
-		for (; stars > 0; stars--) {
-			b.append("⭑");
-		}
-		if (half) {
-			b.append("⭒");
-		}
-		if (noStars > 0) {
-			b.append("§0");
-			for (; noStars > 0; noStars--) {
-				b.append("⭑");
-			}
-		}
-		b.append("§7]");
-		final String text = b.toString();
-		if (hangover && P.use1_11) {
-			P.p.getServer().getScheduler().scheduleSyncDelayedTask(P.p, () -> player.sendTitle("", text, 30, 100, 90), 160);
-			return false;
-		}
-		try {
-			player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(text));
-			return true;
-		} catch (UnsupportedOperationException | NoSuchMethodError e) {
-			player.sendMessage(text);
-			return false;
-		}
-	}
-
-	// Player has drunken too much
-	public void drinkCap(Player player) {
-		quality = getQuality() * 100;
-		drunkeness = 100;
-		syncToSQL(false);
-		if (BConfig.overdrinkKick && !player.hasPermission("brewery.bypass.overdrink")) {
-			P.p.getServer().getScheduler().scheduleSyncDelayedTask(P.p, () -> passOut(player), 1);
-		} else {
-			addPuke(player, 60 + (int) (Math.random() * 60.0));
-			P.p.msg(player, P.p.languageReader.get("Player_CantDrink"));
-		}
-	}
-
 	// push the player around if he moves
 	public static void playerMove(PlayerMoveEvent event) {
 		BPlayer bPlayer = get(event.getPlayer());
 		if (bPlayer != null) {
 			bPlayer.move(event);
-		}
-	}
-
-	// Eat something to drain the drunkeness
-	public void drainByItem(Player player, Material mat) {
-		int strength = BConfig.drainItems.get(mat);
-		if (drain(player, strength)) {
-			remove(player);
-		}
-	}
-
-	// drain the drunkeness by amount, returns true when player has to be removed
-	public boolean drain(@Nullable Player player, int amount) {
-		if (drunkeness > 0) {
-			quality -= getQuality() * amount;
-		}
-		drunkeness -= amount;
-		if (drunkeness > 0) {
-			if (offlineDrunk == 0) {
-				if (player == null) {
-					offlineDrunk = drunkeness;
-				}
-			}
-		} else {
-			if (offlineDrunk == 0) {
-				return true;
-			}
-			if (drunkeness == 0) {
-				drunkeness--;
-			}
-			quality = getQuality();
-			if (drunkeness <= -offlineDrunk) {
-				syncToSQL(true);
-				return drunkeness <= -BConfig.hangoverTime;
-			}
-		}
-		syncToSQL(offlineDrunk > 0);
-		return false;
-	}
-
-	// player is drunk
-	public void move(PlayerMoveEvent event) {
-		// has player more alc than 10
-		if (drunkeness >= 10 && BConfig.stumbleModifier > 0.001f) {
-			if (drunkeness <= 100) {
-				if (time > 1) {
-					time--;
-				} else {
-					// Is he moving
-					if (event.getFrom().getX() != event.getTo().getX() || event.getFrom().getZ() != event.getTo().getZ()) {
-						Player player = event.getPlayer();
-						// We have to cast here because it had issues otherwise on previous versions of Minecraft
-						// Dont know if thats still the case, but we better leave it
-						Entity entity = (Entity) player;
-						// not in midair
-						if (entity.isOnGround()) {
-							time--;
-							if (time == 0) {
-								// push him only to the side? or any direction
-								// like now
-								if (P.use1_9) { // Pushing is way stronger in 1.9
-									push.setX((Math.random() - 0.5) / 2.0);
-									push.setZ((Math.random() - 0.5) / 2.0);
-								} else {
-									push.setX(Math.random() - 0.5);
-									push.setZ(Math.random() - 0.5);
-								}
-								push.multiply(BConfig.stumbleModifier);
-								PlayerPushEvent pushEvent = new PlayerPushEvent(player, push, this);
-								P.p.getServer().getPluginManager().callEvent(pushEvent);
-								push = pushEvent.getPush();
-								if (pushEvent.isCancelled() || push.lengthSquared() <= 0) {
-									time = -10;
-									return;
-								}
-								player.setVelocity(push);
-							} else if (time < 0 && time > -10) {
-								// push him some more in the same direction
-								player.setVelocity(push);
-							} else {
-								// when more alc, push him more often
-								time = (int) (Math.random() * (201.0 - (drunkeness * 2)));
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	public void passOut(Player player) {
-		player.kickPlayer(P.p.languageReader.get("Player_DrunkPassOut"));
-		offlineDrunk = drunkeness;
-		syncToSQL(false);
-	}
-
-
-	// #### Login ####
-
-	// can the player login or is he too drunk
-	public int canJoin() {
-		if (drunkeness <= 70) {
-			return 0;
-		}
-		if (!BConfig.enableLoginDisallow) {
-			if (drunkeness <= 100) {
-				return 0;
-			} else {
-				return 3;
-			}
-		}
-		if (drunkeness <= 90) {
-			if (Math.random() > 0.4) {
-				return 0;
-			} else {
-				return 2;
-			}
-		}
-		if (drunkeness <= 100) {
-			if (Math.random() > 0.6) {
-				return 0;
-			} else {
-				return 2;
-			}
-		}
-		return 3;
-	}
-
-	// player joins
-	public void join(final Player player) {
-		if (offlineDrunk == 0) {
-			return;
-		}
-		// delayed login event as the player is not fully accessible pre login
-		P.p.getServer().getScheduler().runTaskLater(P.p, () -> login(player), 1L);
-	}
-
-	// he may be having a hangover
-	public void login(final Player player) {
-		if (drunkeness < 10) {
-			if (offlineDrunk > 60) {
-				if (BConfig.enableHome && !player.hasPermission("brewery.bypass.teleport")) {
-					goHome(player);
-				}
-			}
-			if (offlineDrunk > 20) {
-				hangoverEffects(player);
-				showDrunkeness(player);
-			}
-			if (drunkeness <= 0) {
-				remove(player);
-			}
-
-		} else if (offlineDrunk - drunkeness >= 30) {
-			if (BConfig.enableWake && !player.hasPermission("brewery.bypass.teleport")) {
-				Location randomLoc = Wakeup.getRandom(player.getLocation());
-				if (randomLoc != null) {
-					player.teleport(randomLoc);
-					P.p.msg(player, P.p.languageReader.get("Player_Wake"));
-				}
-			}
-			offlineDrunk = 0;
-			syncToSQL(false);
-		}
-		offlineDrunk = 0;
-	}
-
-	public void disconnecting() {
-		offlineDrunk = drunkeness;
-		syncToSQL(false);
-	}
-
-	public void goHome(final Player player) {
-		String homeType = BConfig.homeType;
-		if (homeType != null) {
-			Location home = null;
-			if (homeType.equalsIgnoreCase("bed")) {
-				home = player.getBedSpawnLocation();
-			} else if (homeType.startsWith("cmd: ")) {
-				player.performCommand(homeType.substring(5));
-			} else if (homeType.startsWith("cmd:")) {
-				player.performCommand(homeType.substring(4));
-			} else {
-				P.p.errorLog("Config.yml 'homeType: " + homeType + "' unknown!");
-			}
-			if (home != null) {
-				player.teleport(home);
-			}
-		}
-	}
-
-	public void recalculateAlcRecovery(@Nullable Player player) {
-		setAlcRecovery(2);
-		if (player != null) {
-			int rec = PermissionUtil.getAlcRecovery(player);
-			if (rec > -1) {
-				setAlcRecovery(rec);
-			}
-		}
-	}
-
-
-	// #### Puking ####
-
-	// Chance that players puke on big drunkeness
-	// runs every 6 sec, average chance is 15%, so should puke about every 40 sec
-	// good quality can decrease the chance by up to 15%
-	public void drunkPuke(Player player) {
-		if (drunkeness >= 90) {
-			// chance between 20% and 10%
-			if (Math.random() < 0.20f - (getQuality() / 100f)) {
-				addPuke(player, 20 + (int) (Math.random() * 40));
-			}
-		} else if (drunkeness >= 80) {
-			// chance between 15% and 0%
-			if (Math.random() < 0.15f - (getQuality() / 66f)) {
-				addPuke(player, 10 + (int) (Math.random() * 30));
-			}
-		} else if (drunkeness >= 70) {
-			// chance between 10% at 1 quality and 0% at 6 quality
-			if (Math.random() < 0.10f - (getQuality() / 60f)) {
-				addPuke(player, 10 + (int) (Math.random() * 20));
-			}
 		}
 	}
 
@@ -636,9 +281,6 @@ public class BPlayer {
 		}
 	}
 
-
-	// #### Effects ####
-
 	public static void applyEffects(List<PotionEffect> effects, Player player, PlayerEffectEvent.EffectType effectType) {
 		PlayerEffectEvent event = new PlayerEffectEvent(player, effectType, effects);
 		P.p.getServer().getPluginManager().callEvent(event);
@@ -648,32 +290,6 @@ public class BPlayer {
 		}
 		for (PotionEffect effect : effects) {
 			BUtil.reapplyPotionEffect(player, effect, true);
-		}
-	}
-
-	public void drunkEffects(Player player) {
-		int duration = 10 - getQuality();
-		duration += drunkeness / 2;
-		duration *= 5;
-		if (duration > 240) {
-			duration *= 5;
-		} else if (duration < 115) {
-			duration = 115;
-		}
-		if (!P.use1_14) {
-			duration *= 4;
-		}
-		List<PotionEffect> l = new ArrayList<>(1);
-		l.add(PotionEffectType.CONFUSION.createEffect(duration, 0));
-
-		PlayerEffectEvent event = new PlayerEffectEvent(player, PlayerEffectEvent.EffectType.ALCOHOL, l);
-		P.p.getServer().getPluginManager().callEvent(event);
-		l = event.getEffects();
-		if (event.isCancelled() || l == null) {
-			return;
-		}
-		for (PotionEffect effect : l) {
-			effect.apply(player);
 		}
 	}
 
@@ -748,37 +364,15 @@ public class BPlayer {
 		}
 	}
 
-	public void hangoverEffects(final Player player) {
-		int duration = offlineDrunk * 25 * getHangoverQuality();
-		if (!P.use1_14) {
-			duration *= 2;
-		}
-		int amplifier = getHangoverQuality() / 3;
 
-		List<PotionEffect> list = new ArrayList<>(2);
-		list.add(PotionEffectType.SLOW.createEffect(duration, amplifier));
-		list.add(PotionEffectType.HUNGER.createEffect(duration, amplifier));
-
-		PlayerEffectEvent event = new PlayerEffectEvent(player, PlayerEffectEvent.EffectType.HANGOVER, list);
-		P.p.getServer().getPluginManager().callEvent(event);
-		list = event.getEffects();
-		if (event.isCancelled() || list == null) {
-			return;
-		}
-		for (PotionEffect effect : list) {
-			BUtil.reapplyPotionEffect(player, effect, true);
-		}
-	}
-
-
-	// #### Scheduled ####
+	// #### Login ####
 
 	public static void drunkeness() {
 		for (Map.Entry<String, BPlayer> entry : players.entrySet()) {
 			String name = entry.getKey();
 			BPlayer bplayer = entry.getValue();
 
-			if (bplayer.drunkeness > 30) {
+			if (bplayer.drunkenness > 30) {
 				if (bplayer.offlineDrunk == 0) {
 					Player player = BUtil.getPlayerfromString(name);
 					if (player != null) {
@@ -819,36 +413,439 @@ public class BPlayer {
 		}
 	}
 
-	// Sync Drunkeness Data to SQL if enabled
-	public void syncToSQL(boolean playerOffline) {
-		if (BConfig.sqlDrunkSync && BConfig.sqlSync != null) {
-			BConfig.sqlSync.updatePlayer(UUID.fromString(uuid), this, playerOffline);
-		}
-	}
-
 	// save all data
 	public static void save(ConfigurationSection config) {
 		for (Map.Entry<String, BPlayer> entry : players.entrySet()) {
 			ConfigurationSection section = config.createSection(entry.getKey());
 			BPlayer bPlayer = entry.getValue();
 			section.set("quality", bPlayer.quality);
-			section.set("drunk", bPlayer.drunkeness);
+			section.set("drunk", bPlayer.drunkenness);
 			if (bPlayer.offlineDrunk != 0) {
 				section.set("offDrunk", bPlayer.offlineDrunk);
 			}
 		}
 	}
 
+	public void remove() {
+		for (Iterator<Map.Entry<String, BPlayer>> iterator = players.entrySet().iterator(); iterator.hasNext(); ) {
+			Map.Entry<String, BPlayer> entry = iterator.next();
+			if (entry.getValue() == this) {
+				if (BConfig.sqlDrunkSync && BConfig.sqlSync != null) {
+					BConfig.sqlSync.removePlayer(UUID.fromString(entry.getKey()));
+				}
+				iterator.remove();
+				return;
+			}
+		}
+	}
+
+	/**
+	 * Show the Player his current drunkeness and quality as an Actionbar graphic or when unsupported, in chat
+	 */
+	public void showDrunkeness(Player player) {
+		try {
+			// It this returns false, then the Action Bar is not supported. Do not repeat the message as it was sent into chat
+			if (sendDrunkenessMessage(player)) {
+				P.p.getServer().getScheduler().scheduleSyncDelayedTask(P.p, () -> sendDrunkenessMessage(player), 40);
+				P.p.getServer().getScheduler().scheduleSyncDelayedTask(P.p, () -> sendDrunkenessMessage(player), 80);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Send one Message to the player, showing his drunkeness or hangover
+	 *
+	 * @param player The Player to send the message to
+	 * @return false if the message should not be repeated.
+	 */
+	public boolean sendDrunkenessMessage(Player player) {
+		StringBuilder b = new StringBuilder(100);
+
+		int strength = drunkenness;
+		boolean hangover = false;
+		if (offlineDrunk > 0) {
+			strength = offlineDrunk;
+			hangover = true;
+		}
+
+		b.append(P.p.languageReader.get(hangover ? "Player_Hangover" : "Player_Drunkeness"));
+
+		// Drunkenness or Hangover Strength Bars
+		b.append(": §7[");
+		// Show 25 Bars, color one per 4 drunkeness
+		int bars;
+		if (strength <= 0) {
+			bars = 0;
+		} else if (strength == 1) {
+			bars = 1;
+		} else {
+			bars = Math.round(strength / 4.0f);
+		}
+		int noBars = 25 - bars;
+		if (bars > 0) {
+			b.append(hangover ? "§c" : "§6");
+		}
+		for (int addedBars = 0; addedBars < bars; addedBars++) {
+			b.append("|");
+			if (addedBars == 20) {
+				// color the last 4 bars red
+				b.append("§c");
+			}
+		}
+		if (noBars > 0) {
+			b.append("§0");
+			for (; noBars > 0; noBars--) {
+				b.append("|");
+			}
+		}
+		b.append("§7] ");
+
+
+		int quality;
+		if (hangover) {
+			quality = 11 - getHangoverQuality();
+		} else {
+			quality = strength > 0 ? getQuality() : 0;
+		}
+
+		// Quality Stars
+		int stars = quality / 2;
+		boolean half = quality % 2 > 0;
+		int noStars = 5 - stars - (half ? 1 : 0);
+
+		b.append("§7[").append(BrewLore.getQualityColor(quality));
+		for (; stars > 0; stars--) {
+			b.append("⭑");
+		}
+		if (half) {
+			b.append("⭒");
+		}
+		if (noStars > 0) {
+			b.append("§0");
+			for (; noStars > 0; noStars--) {
+				b.append("⭑");
+			}
+		}
+		b.append("§7]");
+		final String text = b.toString();
+		if (hangover && P.use1_11) {
+			P.p.getServer().getScheduler().scheduleSyncDelayedTask(P.p, () -> player.sendTitle("", text, 30, 100, 90), 160);
+			return false;
+		}
+		try {
+			player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(text));
+			return true;
+		} catch (UnsupportedOperationException | NoSuchMethodError e) {
+			player.sendMessage(text);
+			return false;
+		}
+	}
+
+
+	// #### Puking ####
+
+	// Player has drunken too much
+	public void drinkCap(Player player) {
+		quality = getQuality() * 100;
+		drunkenness = 100;
+		syncToSQL(false);
+		if (BConfig.overdrinkKick && !player.hasPermission("brewery.bypass.overdrink")) {
+			P.p.getServer().getScheduler().scheduleSyncDelayedTask(P.p, () -> passOut(player), 1);
+		} else {
+			addPuke(player, 60 + (int) (Math.random() * 60.0));
+			P.p.msg(player, P.p.languageReader.get("Player_CantDrink"));
+		}
+	}
+
+	// Eat something to drain the drunkenness
+	public void drainByItem(Player player, Material mat) {
+		int strength = BConfig.drainItems.get(mat);
+		if (drain(player, strength)) {
+			remove(player);
+		}
+	}
+
+	// drain the drunkenness by amount, returns true when player has to be removed
+	public boolean drain(@Nullable Player player, int amount) {
+		if (drunkenness > 0) {
+			quality -= getQuality() * amount;
+		}
+		drunkenness -= amount;
+		if (drunkenness > 0) {
+			if (offlineDrunk == 0) {
+				if (player == null) {
+					offlineDrunk = drunkenness;
+				}
+			}
+		} else {
+			if (offlineDrunk == 0) {
+				return true;
+			}
+			if (drunkenness == 0) {
+				drunkenness--;
+			}
+			quality = getQuality();
+			if (drunkenness <= -offlineDrunk) {
+				syncToSQL(true);
+				return drunkenness <= -BConfig.hangoverTime;
+			}
+		}
+		syncToSQL(offlineDrunk > 0);
+		return false;
+	}
+
+	// player is drunk
+	public void move(PlayerMoveEvent event) {
+		// has player more alc than 10
+		if (drunkenness >= 10 && BConfig.stumbleModifier > 0.001f) {
+			if (drunkenness <= 100) {
+				if (time > 1) {
+					time--;
+				} else {
+					// Is he moving
+					if (event.getFrom().getX() != event.getTo().getX() || event.getFrom().getZ() != event.getTo().getZ()) {
+						Player player = event.getPlayer();
+						// We have to cast here because it had issues otherwise on previous versions of Minecraft
+						// Don't know if that's still the case, but we better leave it
+						Entity entity = (Entity) player;
+						// not in midair
+						if (entity.isOnGround()) {
+							time--;
+							if (time == 0) {
+								// push him only to the side? or any direction
+								// like now
+								if (P.use1_9) { // Pushing is way stronger in 1.9
+									push.setX((Math.random() - 0.5) / 2.0);
+									push.setZ((Math.random() - 0.5) / 2.0);
+								} else {
+									push.setX(Math.random() - 0.5);
+									push.setZ(Math.random() - 0.5);
+								}
+								push.multiply(BConfig.stumbleModifier);
+								PlayerPushEvent pushEvent = new PlayerPushEvent(player, push, this);
+								P.p.getServer().getPluginManager().callEvent(pushEvent);
+								push = pushEvent.getPush();
+								if (pushEvent.isCancelled() || push.lengthSquared() <= 0) {
+									time = -10;
+									return;
+								}
+								player.setVelocity(push);
+							} else if (time < 0 && time > -10) {
+								// push him some more in the same direction
+								player.setVelocity(push);
+							} else {
+								// when more alc, push him more often
+								time = (int) (Math.random() * (201.0 - (drunkenness * 2)));
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+
+	// #### Effects ####
+
+	public void passOut(Player player) {
+		player.kickPlayer(P.p.languageReader.get("Player_DrunkPassOut"));
+		offlineDrunk = drunkenness;
+		syncToSQL(false);
+	}
+
+	// can the player login or is he too drunk
+	public int canJoin() {
+		if (drunkenness <= 70) {
+			return 0;
+		}
+		if (!BConfig.enableLoginDisallow) {
+			if (drunkenness <= 100) {
+				return 0;
+			} else {
+				return 3;
+			}
+		}
+		if (drunkenness <= 90) {
+			if (Math.random() > 0.4) {
+				return 0;
+			} else {
+				return 2;
+			}
+		}
+		if (drunkenness <= 100) {
+			if (Math.random() > 0.6) {
+				return 0;
+			} else {
+				return 2;
+			}
+		}
+		return 3;
+	}
+
+	// player joins
+	public void join(final Player player) {
+		if (offlineDrunk == 0) {
+			return;
+		}
+		// delayed login event as the player is not fully accessible pre login
+		P.p.getServer().getScheduler().runTaskLater(P.p, () -> login(player), 1L);
+	}
+
+	// he may be having a hangover
+	public void login(final Player player) {
+		if (drunkenness < 10) {
+			if (offlineDrunk > 60) {
+				if (BConfig.enableHome && !player.hasPermission("brewery.bypass.teleport")) {
+					goHome(player);
+				}
+			}
+			if (offlineDrunk > 20) {
+				hangoverEffects(player);
+				showDrunkeness(player);
+			}
+			if (drunkenness <= 0) {
+				remove(player);
+			}
+
+		} else if (offlineDrunk - drunkenness >= 30) {
+			if (BConfig.enableWake && !player.hasPermission("brewery.bypass.teleport")) {
+				Location randomLoc = Wakeup.getRandom(player.getLocation());
+				if (randomLoc != null) {
+					player.teleport(randomLoc);
+					P.p.msg(player, P.p.languageReader.get("Player_Wake"));
+				}
+			}
+			offlineDrunk = 0;
+			syncToSQL(false);
+		}
+		offlineDrunk = 0;
+	}
+
+	public void disconnecting() {
+		offlineDrunk = drunkenness;
+		syncToSQL(false);
+	}
+
+	public void goHome(final Player player) {
+		String homeType = BConfig.homeType;
+		if (homeType != null) {
+			Location home = null;
+			if (homeType.equalsIgnoreCase("bed")) {
+				home = player.getBedSpawnLocation();
+			} else if (homeType.startsWith("cmd: ")) {
+				player.performCommand(homeType.substring(5));
+			} else if (homeType.startsWith("cmd:")) {
+				player.performCommand(homeType.substring(4));
+			} else {
+				P.p.errorLog("Config.yml 'homeType: " + homeType + "' unknown!");
+			}
+			if (home != null) {
+				player.teleport(home);
+			}
+		}
+	}
+
+	public void recalculateAlcRecovery(@Nullable Player player) {
+		setAlcRecovery(2);
+		if (player != null) {
+			int rec = PermissionUtil.getAlcRecovery(player);
+			if (rec > -1) {
+				setAlcRecovery(rec);
+			}
+		}
+	}
+
+
+	// #### Scheduled ####
+
+	// Chance that players puke on big drunkeness
+	// runs every 6 sec, average chance is 15%, so should puke about every 40 sec
+	// good quality can decrease the chance by up to 15%
+	public void drunkPuke(Player player) {
+		if (drunkenness >= 90) {
+			// chance between 20% and 10%
+			if (Math.random() < 0.20f - (getQuality() / 100f)) {
+				addPuke(player, 20 + (int) (Math.random() * 40));
+			}
+		} else if (drunkenness >= 80) {
+			// chance between 15% and 0%
+			if (Math.random() < 0.15f - (getQuality() / 66f)) {
+				addPuke(player, 10 + (int) (Math.random() * 30));
+			}
+		} else if (drunkenness >= 70) {
+			// chance between 10% at 1 quality and 0% at 6 quality
+			if (Math.random() < 0.10f - (getQuality() / 60f)) {
+				addPuke(player, 10 + (int) (Math.random() * 20));
+			}
+		}
+	}
+
+	public void drunkEffects(Player player) {
+		int duration = 10 - getQuality();
+		duration += drunkenness / 2;
+		duration *= 5;
+		if (duration > 240) {
+			duration *= 5;
+		} else if (duration < 115) {
+			duration = 115;
+		}
+		if (!P.use1_14) {
+			duration *= 4;
+		}
+		List<PotionEffect> l = new ArrayList<>(1);
+		l.add(PotionEffectType.CONFUSION.createEffect(duration, 0));
+
+		PlayerEffectEvent event = new PlayerEffectEvent(player, PlayerEffectEvent.EffectType.ALCOHOL, l);
+		P.p.getServer().getPluginManager().callEvent(event);
+		l = event.getEffects();
+		if (event.isCancelled() || l == null) {
+			return;
+		}
+		for (PotionEffect effect : l) {
+			effect.apply(player);
+		}
+	}
+
+	public void hangoverEffects(final Player player) {
+		int duration = offlineDrunk * 25 * getHangoverQuality();
+		if (!P.use1_14) {
+			duration *= 2;
+		}
+		int amplifier = getHangoverQuality() / 3;
+
+		List<PotionEffect> list = new ArrayList<>(2);
+		list.add(PotionEffectType.SLOW.createEffect(duration, amplifier));
+		list.add(PotionEffectType.HUNGER.createEffect(duration, amplifier));
+
+		PlayerEffectEvent event = new PlayerEffectEvent(player, PlayerEffectEvent.EffectType.HANGOVER, list);
+		P.p.getServer().getPluginManager().callEvent(event);
+		list = event.getEffects();
+		if (event.isCancelled() || list == null) {
+			return;
+		}
+		for (PotionEffect effect : list) {
+			BUtil.reapplyPotionEffect(player, effect, true);
+		}
+	}
+
+	// Sync Drunkenness Data to SQL if enabled
+	public void syncToSQL(boolean playerOffline) {
+		if (BConfig.sqlDrunkSync && BConfig.sqlSync != null) {
+			BConfig.sqlSync.updatePlayer(UUID.fromString(uuid), this, playerOffline);
+		}
+	}
+
 
 	// #### getter/setter ####
-
 
 	public String getUuid() {
 		return uuid;
 	}
 
-	public int getDrunkeness() {
-		return drunkeness;
+	public int getDrunkenness() {
+		return drunkenness;
 	}
 
 	public void setData(int drunkeness, int quality) {
@@ -861,19 +858,19 @@ public class BPlayer {
 				this.quality = getQuality() * drunkeness;
 			}
 		}
-		this.drunkeness = drunkeness;
+		this.drunkenness = drunkeness;
 		syncToSQL(false);
 	}
 
 	public int getQuality() {
-		if (drunkeness == 0) {
+		if (drunkenness == 0) {
 			P.p.errorLog("drunkeness should not be 0!");
 			return quality;
 		}
-		if (drunkeness < 0) {
+		if (drunkenness < 0) {
 			return quality;
 		}
-		return Math.round((float) quality / (float) drunkeness);
+		return Math.round((float) quality / (float) drunkenness);
 	}
 
 	public int getQualityData() {
@@ -882,14 +879,14 @@ public class BPlayer {
 
 	// opposite of quality
 	public int getHangoverQuality() {
-		if (drunkeness < 0) {
+		if (drunkenness < 0) {
 			return quality + 11;
 		}
 		return -getQuality() + 11;
 	}
 
 	/**
-	 * Drunkeness at the time he went offline
+	 * Drunkenness at the time he went offline
 	 */
 	public int getOfflineDrunkeness() {
 		return offlineDrunk;
@@ -902,4 +899,5 @@ public class BPlayer {
 	public void setAlcRecovery(int alcRecovery) {
 		this.alcRecovery = alcRecovery;
 	}
+
 }

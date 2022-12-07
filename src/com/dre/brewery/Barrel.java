@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A Multi Block Barrel with Inventory
+ * A Multi Block Barrel with Inventory.
  */
 public class Barrel implements InventoryHolder {
 
@@ -57,14 +57,15 @@ public class Barrel implements InventoryHolder {
 	}
 
 	/**
-	 * load from file
+	 * Load from file.
 	 */
 	public Barrel(Block spigot, byte sign, BoundingBox bounds, Map<String, Object> items, float time) {
 		this(spigot, sign, bounds, items, time, false);
 	}
 
 	/**
-	 * Load from File
+	 * Load from File.
+	 *
 	 * <p>If async: true, The Barrel Bounds will not be recreated when missing/corrupt, getBody().getBounds() will be null if it needs recreating
 	 *
 	 */
@@ -132,7 +133,7 @@ public class Barrel implements InventoryHolder {
 	}
 
 	/**
-	 * Ask for permission to destroy barrel
+	 * Ask for permission to destroy barrel.
 	 */
 	public boolean hasPermsDestroy(Player player, Block block, BarrelDestroyEvent.Reason reason) {
 		// Listened to by LWCBarrel (IntegrationListener)
@@ -142,7 +143,7 @@ public class Barrel implements InventoryHolder {
 	}
 
 	/**
-	 * player opens the barrel
+	 * Player opens the barrel.
 	 */
 	public void open(Player player) {
 		if (inventory == null) {
@@ -168,7 +169,7 @@ public class Barrel implements InventoryHolder {
 							}
 						}
 						loadTime = System.nanoTime() - loadTime;
-						P.p.debugLog("opening Barrel with potions (" + (float) (loadTime / 1000000.0) + "ms)");
+						P.p.debugLog("Opening Barrel with potions (" + (float) (loadTime / 1000000.0) + "ms)");
 					}
 				}
 			}
@@ -273,7 +274,7 @@ public class Barrel implements InventoryHolder {
 	}
 
 	/**
-	 * Get the Barrel by Sign or Spigot (Fastest)
+	 * Gets the Barrel by Sign or Spigot (Fastest).
 	 */
 	@Nullable
 	public static Barrel getBySpigot(Block sign) {
@@ -303,7 +304,7 @@ public class Barrel implements InventoryHolder {
 	}
 
 	/**
-	 * Get the barrel by its corpus (Wood Planks, Stairs)
+	 * Gets the barrel by its corpus (Wood Planks, Stairs).
 	 */
 	@Nullable
 	public static Barrel getByWood(Block wood) {
@@ -330,7 +331,7 @@ public class Barrel implements InventoryHolder {
 	}
 
 	/**
-	 * creates a new Barrel out of a sign
+	 * Creates a new Barrel out of a sign
 	 */
 	public static boolean create(Block sign, Player player) {
 		Block spigot = BarrelBody.getSpigotOfSign(sign);
@@ -372,7 +373,7 @@ public class Barrel implements InventoryHolder {
 	}
 
 	/**
-	 * Removes a barrel, throwing included potions to the ground
+	 * Removes a barrel, throwing included potions to the ground.
 	 *
 	 * @param broken The Block that was broken
 	 * @param breaker The Player that broke it, or null if not known
@@ -431,36 +432,37 @@ public class Barrel implements InventoryHolder {
 	}
 
 	/**
-	 * is this a Large barrel?
+	 * Is this a Large barrel?
 	 */
 	public boolean isLarge() {
 		return !isSmall();
 	}
 
 	/**
-	 * is this a Small barrel?
+	 * Is this a Small barrel?
 	 */
 	public boolean isSmall() {
 		return LegacyUtil.isSign(spigot.getType());
 	}
 
 	/**
-	 * returns the Sign of a large barrel, the spigot if there is none
+	 * Returns the Sign of a large barrel, the spigot if there is none
 	 */
 	public Block getSignOfSpigot() {
 		return body.getSignOfSpigot();
 	}
 
 	/**
-	 * returns the fence above/below a block, itself if there is none
+	 * Returns the fence above/below a block, itself if there is none
 	 */
 	public static Block getSpigotOfSign(Block block) {
 		return BarrelBody.getSpigotOfSign(block);
 	}
 
 	/**
-	 * returns null if Barrel is correctly placed; the block that is missing when not.
-	 * <p>The barrel needs to be formed correctly
+	 * Returns null if Barrel is correctly placed; the block that is missing when not.
+	 *
+	 * <p>The barrel needs to be formed correctly.
 	 *
 	 * @param force to also check even if chunk is not loaded
 	 */
@@ -476,14 +478,14 @@ public class Barrel implements InventoryHolder {
 	}
 
 	/**
-	 * unloads barrels that are in an unloading world
+	 * Unloads barrels that are in an unloading World.
 	 */
 	public static void onUnload(World world) {
 		barrels.removeIf(barrel -> barrel.spigot.getWorld().equals(world));
 	}
 
 	/**
-	 * Unload all Barrels that have a Block in an unloaded World
+	 * Unloads all Barrels that have a Block in an unloaded World.
 	 */
 	public static void unloadWorlds() {
 		List<World> worlds = P.p.getServer().getWorlds();
@@ -491,7 +493,7 @@ public class Barrel implements InventoryHolder {
 	}
 
 	/**
-	 * Saves all data
+	 * Saves all data.
 	 */
 	public static void save(ConfigurationSection config, ConfigurationSection oldData) {
 		BUtil.createWorldSections(config);

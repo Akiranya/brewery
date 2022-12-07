@@ -219,8 +219,8 @@ public class PlayerListener implements Listener {
 	public void onPlayerRespawn(PlayerRespawnEvent event) {
 		BPlayer bPlayer = BPlayer.get(event.getPlayer());
 		if (bPlayer != null) {
-			if (bPlayer.getDrunkeness() > 20) {
-				bPlayer.setData(bPlayer.getDrunkeness() - 20, 0);
+			if (bPlayer.getDrunkenness() > 20) {
+				bPlayer.setData(bPlayer.getDrunkenness() - 20, 0);
 			} else {
 				BPlayer.remove(event.getPlayer());
 			}
@@ -264,7 +264,7 @@ public class PlayerListener implements Listener {
 			BPlayer bplayer = BPlayer.get(player);
 			if (bplayer != null) {
 				if (player.hasPermission("brewery.bypass.logindeny")) {
-					if (bplayer.getDrunkeness() > 100) {
+					if (bplayer.getDrunkenness() > 100) {
 						bplayer.setData(100, 0);
 					}
 					bplayer.join(player);

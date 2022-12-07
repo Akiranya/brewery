@@ -17,8 +17,8 @@ import java.util.Objects;
  */
 public class SimpleItem extends RecipeItem implements Ingredient {
 
-	private Material mat;
-	private short dur; // Old Mc
+	private final Material mat;
+	private final short dur; // Old MC
 
 
 	public SimpleItem(Material mat) {
@@ -28,6 +28,25 @@ public class SimpleItem extends RecipeItem implements Ingredient {
 	public SimpleItem(Material mat, short dur) {
 		this.mat = mat;
 		this.dur = dur;
+	}
+
+	public static SimpleItem loadFrom(ItemLoader loader) {
+		try {
+			DataInputStream in = loader.getInputStream();
+			Material mat = Material.getMaterial(in.readUTF());
+			short dur = in.readShort();
+			if (mat != null) {
+				return new SimpleItem(mat, dur);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	// Needs to be called at Server start
+	public static void registerItemLoader(P p) {
+		p.registerForItemLoader("SI", SimpleItem::loadFrom);
 	}
 
 	@Override
@@ -105,7 +124,7 @@ public class SimpleItem extends RecipeItem implements Ingredient {
 		if (!super.equals(o)) return false;
 		SimpleItem item = (SimpleItem) o;
 		return dur == item.dur &&
-			mat == item.mat;
+				mat == item.mat;
 	}
 
 	@Override
@@ -116,9 +135,9 @@ public class SimpleItem extends RecipeItem implements Ingredient {
 	@Override
 	public String toString() {
 		return "SimpleItem{" +
-			"mat=" + mat.name().toLowerCase() +
-			" amount=" + getAmount() +
-			'}';
+				"mat=" + mat.name().toLowerCase() +
+				" amount=" + getAmount() +
+				'}';
 	}
 
 	@Override
@@ -126,26 +145,6 @@ public class SimpleItem extends RecipeItem implements Ingredient {
 		out.writeUTF("SI");
 		out.writeUTF(mat.name());
 		out.writeShort(dur);
-	}
-
-	public static SimpleItem loadFrom(ItemLoader loader) {
-		try {
-			DataInputStream in = loader.getInputStream();
-			Material mat = Material.getMaterial(in.readUTF());
-			short dur = in.readShort();
-			if (mat != null) {
-				SimpleItem item = new SimpleItem(mat, dur);
-				return item;
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	// Needs to be called at Server start
-	public static void registerItemLoader(P p) {
-		p.registerForItemLoader("SI", SimpleItem::loadFrom);
 	}
 
 }

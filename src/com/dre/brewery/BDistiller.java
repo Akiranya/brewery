@@ -16,36 +16,27 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Updated for 1.9 to replicate the "Brewing" process for distilling.
- * Because of how metadata has changed, the brewer no longer triggers as previously described.
- * So, I've added some event tracking and manual forcing of the brewing "animation" if the
- *  set of ingredients in the brewer can be distilled.
- * Nothing here should interfere with vanilla brewing.
+ * Updated for 1.9 to replicate the "Brewing" process for distilling. Because of how metadata has changed, the brewer no
+ * longer triggers as previously described. So, I've added some event tracking and manual forcing of the brewing
+ * "animation" if the set of ingredients in the brewer can be distilled. Nothing here should interfere with vanilla
+ * brewing.
  *
  * @author ProgrammerDan (1.9 distillation update only)
  */
 public class BDistiller {
 
-	private static final int DISTILLTIME = 400;
-	private static Map<Block, BDistiller> trackedDistillers = new HashMap<>();
+	private static final int DISTILL_TIME = 400;
+	private static final Map<Block, BDistiller> trackedDistillers = new HashMap<>();
 
+	private final Block standBlock;
+	private final int fuel;
 	private int taskId;
 	private int runTime = -1;
 	private int brewTime = -1;
-	private Block standBlock;
-	private int fuel;
 
 	public BDistiller(Block standBlock, int fuel) {
 		this.standBlock = standBlock;
 		this.fuel = fuel;
-	}
-
-	public void cancelDistill() {
-		Bukkit.getScheduler().cancelTask(taskId); // cancel prior
-	}
-
-	public void start() {
-		taskId = new DistillRunnable().runTaskTimer(P.p, 2L, 1L).getTaskId();
 	}
 
 	public static void distillerClick(InventoryClickEvent event) {
@@ -98,11 +89,11 @@ public class BDistiller {
 
 	public static byte hasBrew(BrewerInventory brewer, Brew[] contents) {
 		ItemStack item = brewer.getItem(3); // ingredient
-		boolean glowstone = (item != null && Material.GLOWSTONE_DUST == item.getType()); // need dust in the top slot.
+		boolean glowStone = (item != null && Material.GLOWSTONE_DUST == item.getType()); // need dust in the top slot.
 		byte customFound = 0;
 		for (Brew brew : contents) {
 			if (brew != null) {
-				if (!glowstone) {
+				if (!glowStone) {
 					return 1;
 				}
 				if (brew.canDistill()) {
@@ -167,6 +158,14 @@ public class BDistiller {
 		}
 	}
 
+	public void cancelDistill() {
+		Bukkit.getScheduler().cancelTask(taskId); // cancel prior
+	}
+
+	public void start() {
+		taskId = new DistillRunnable().runTaskTimer(P.p, 2L, 1L).getTaskId();
+	}
+
 	public class DistillRunnable extends BukkitRunnable {
 		private Brew[] contents = null;
 
@@ -175,14 +174,14 @@ public class BDistiller {
 			BlockState now = standBlock.getState();
 			if (now instanceof BrewingStand) {
 				BrewingStand stand = (BrewingStand) now;
-				if (brewTime == -1) { // check at the beginning for distillables
-					if (!prepareForDistillables(stand)) {
+				if (brewTime == -1) { // check at the beginning for distillable
+					if (!prepareForDistillable(stand)) {
 						return;
 					}
 				}
 
 				brewTime--; // count down.
-				stand.setBrewingTime((int) ((float) brewTime / ((float) runTime / (float) DISTILLTIME)) + 1);
+				stand.setBrewingTime((int) ((float) brewTime / ((float) runTime / (float) DISTILL_TIME)) + 1);
 
 				if (brewTime <= 1) { // Done!
 					contents = getDistillContents(stand.getInventory()); // Get the contents again at the end just in case
@@ -206,7 +205,7 @@ public class BDistiller {
 			}
 		}
 
-		private boolean prepareForDistillables(BrewingStand stand) {
+		private boolean prepareForDistillable(BrewingStand stand) {
 			BrewerInventory inventory = stand.getInventory();
 			if (contents == null) {
 				contents = getDistillContents(inventory);
@@ -218,7 +217,7 @@ public class BDistiller {
 					// Custom potion but not for distilling. Stop any brewing and cancel this task
 					if (stand.getBrewingTime() > 0) {
 						if (P.use1_11) {
-							// The trick below doesnt work in 1.11, but we dont need it anymore
+							// The trick below doesn't work in 1.11, but we don't need it anymore
 							// This should only happen with older Brews that have been made with the old Potion Color System
 							// This causes standard potions to not brew in the brewing stand if put together with Brews, but the bubble animation will play
 							stand.setBrewingTime(Short.MAX_VALUE);
@@ -236,12 +235,12 @@ public class BDistiller {
 					this.cancel();
 					trackedDistillers.remove(standBlock);
 					showAlc(inventory, contents);
-					P.p.debugLog("nothing to distill");
+					P.p.debugLog("Nothing to distill");
 					return false;
 				default:
 					runTime = getLongestDistillTime(contents);
 					brewTime = runTime;
-					P.p.debugLog("using brewtime: " + runTime);
+					P.p.debugLog("Using brew time: " + runTime);
 
 			}
 			return true;

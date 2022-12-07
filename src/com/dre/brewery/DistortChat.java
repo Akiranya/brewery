@@ -12,14 +12,14 @@ import java.util.Map;
 
 public class DistortChat {
 
-	// represends Words and letters, that are replaced in drunk players messages
+	// Represent words and letters, that are replaced in drunk players messages
 
+	private static final Map<String, Long> waitPlayers = new HashMap<>();
 	public static List<DistortChat> words = new ArrayList<>();
 	public static List<String> commands;
 	public static List<String[]> ignoreText = new ArrayList<>();
 	public static Boolean doSigns;
 	public static Boolean log;
-	private static Map<String, Long> waitPlayers = new HashMap<>();
 
 	private String from;
 	private String to;
@@ -64,7 +64,7 @@ public class DistortChat {
 		}
 	}
 
-	// Distort players words when he uses a command
+	// Distorts players words when he uses a command
 	public static void playerCommand(PlayerCommandPreprocessEvent event) {
 		BPlayer bPlayer = BPlayer.get(event.getPlayer());
 		if (bPlayer != null) {
@@ -80,7 +80,7 @@ public class DistortChat {
 										P.p.log(P.p.languageReader.get("Player_TriedToSay", name, chat));
 									}
 									String message = chat.substring(command.length() + 1);
-									String distorted = distortMessage(message, bPlayer.getDrunkeness());
+									String distorted = distortMessage(message, bPlayer.getDrunkenness());
 									PlayerChatDistortEvent call = new PlayerChatDistortEvent(event.isAsynchronous(), event.getPlayer(), bPlayer, message, distorted);
 									P.p.getServer().getPluginManager().callEvent(call);
 									if (call.isCancelled()) {
@@ -100,7 +100,7 @@ public class DistortChat {
 		}
 	}
 
-	// Distort players words when he uses a command
+	// Distorts players words when he uses a command
 	public static void signWrite(SignChangeEvent event) {
 		BPlayer bPlayer = BPlayer.get(event.getPlayer());
 		if (bPlayer != null) {
@@ -108,7 +108,7 @@ public class DistortChat {
 				int index = 0;
 				for (String message : event.getLines()) {
 					if (message.length() > 1) {
-						String distorted = distortMessage(message, bPlayer.getDrunkeness());
+						String distorted = distortMessage(message, bPlayer.getDrunkenness());
 						PlayerChatDistortEvent call = new PlayerChatDistortEvent(event.isAsynchronous(), event.getPlayer(), bPlayer, message, distorted);
 						P.p.getServer().getPluginManager().callEvent(call);
 						if (!call.isCancelled()) {
@@ -126,7 +126,7 @@ public class DistortChat {
 		}
 	}
 
-	// Distort players words when he talks
+	// Distorts players words when he talks
 	public static void playerChat(AsyncPlayerChatEvent event) {
 		BPlayer bPlayer = BPlayer.get(event.getPlayer());
 		if (bPlayer != null) {
@@ -136,7 +136,7 @@ public class DistortChat {
 					P.p.log(P.p.languageReader.get("Player_TriedToSay", event.getPlayer().getName(), message));
 				}
 
-				String distorted = distortMessage(message, bPlayer.getDrunkeness());
+				String distorted = distortMessage(message, bPlayer.getDrunkenness());
 				PlayerChatDistortEvent call = new PlayerChatDistortEvent(event.isAsynchronous(), event.getPlayer(), bPlayer, message, distorted);
 				P.p.getServer().getPluginManager().callEvent(call);
 				if (call.isCancelled()) {
@@ -149,7 +149,7 @@ public class DistortChat {
 		}
 	}
 
-	// distorts a message, ignoring text enclosed in ignoreText letters
+	// Distorts a message, ignoring text enclosed in ignoreText letters
 	public static String distortMessage(String message, int drunkeness) {
 		if (!ignoreText.isEmpty()) {
 			for (String[] bypass : ignoreText) {
@@ -182,7 +182,7 @@ public class DistortChat {
 		return distortString(message, drunkeness);
 	}
 
-	// distorts a message without checking ignoreText letters
+	// Distorts a message without checking ignoreText letters
 	private static String distortString(String message, int drunkeness) {
 		if (message.length() > 1) {
 			// Create our own reference to the words list, in case of config reload
@@ -196,8 +196,8 @@ public class DistortChat {
 		return message;
 	}
 
-	// replace "percent"% of "from" -> "to" in "words", when the string before
-	// each "from" "match"es "pre"
+	// Replace "percent"% of "from" -> "to" in "words", when the string before
+	// Each "from" "match"es "pre"
 	// Not yet ignoring case :(
 	public String distort(String words) {
 		String from = this.from;

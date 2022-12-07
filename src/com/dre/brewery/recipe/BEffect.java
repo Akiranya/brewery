@@ -10,19 +10,19 @@ import org.bukkit.potion.PotionEffectType;
 public class BEffect {
 
 	private PotionEffectType type;
-	private short minlvl;
-	private short maxlvl;
-	private short minduration;
-	private short maxduration;
+	private short minLvl;
+	private short maxLvl;
+	private short minDuration;
+	private short maxDuration;
 	private boolean hidden = false;
 
 
-	public BEffect(PotionEffectType type, short minlvl, short maxlvl, short minduration, short maxduration, boolean hidden) {
+	public BEffect(PotionEffectType type, short minLvl, short maxLvl, short minDuration, short maxDuration, boolean hidden) {
 		this.type = type;
-		this.minlvl = minlvl;
-		this.maxlvl = maxlvl;
-		this.minduration = minduration;
-		this.maxduration = maxduration;
+		this.minLvl = minLvl;
+		this.maxLvl = maxLvl;
+		this.minDuration = minDuration;
+		this.maxDuration = maxDuration;
 		this.hidden = hidden;
 	}
 
@@ -62,34 +62,34 @@ public class BEffect {
 				setLvl(range);
 			} else {
 				setDuration(range);
-				maxlvl = 3;
-				minlvl = 1;
+				maxLvl = 3;
+				minLvl = 1;
 			}
 		} else {
-			maxduration = 20;
-			minduration = 10;
-			maxlvl = 3;
-			minlvl = 1;
+			maxDuration = 20;
+			minDuration = 10;
+			maxLvl = 3;
+			minLvl = 1;
 		}
 	}
 
 	private void setLvl(String[] range) {
 		if (range.length == 1) {
-			maxlvl = (short) P.p.parseInt(range[0]);
-			minlvl = 1;
+			maxLvl = (short) P.p.parseInt(range[0]);
+			minLvl = 1;
 		} else {
-			maxlvl = (short) P.p.parseInt(range[1]);
-			minlvl = (short) P.p.parseInt(range[0]);
+			maxLvl = (short) P.p.parseInt(range[1]);
+			minLvl = (short) P.p.parseInt(range[0]);
 		}
 	}
 
 	private void setDuration(String[] range) {
 		if (range.length == 1) {
-			maxduration = (short) P.p.parseInt(range[0]);
-			minduration = (short) (maxduration / 8);
+			maxDuration = (short) P.p.parseInt(range[0]);
+			minDuration = (short) (maxDuration / 8);
 		} else {
-			maxduration = (short) P.p.parseInt(range[1]);
-			minduration = (short) P.p.parseInt(range[0]);
+			maxDuration = (short) P.p.parseInt(range[1]);
+			minDuration = (short) P.p.parseInt(range[0]);
 		}
 	}
 
@@ -118,11 +118,11 @@ public class BEffect {
 	}
 
 	public int calcDuration(float quality) {
-		return (int) Math.round(minduration + ((maxduration - minduration) * (quality / 10.0)));
+		return (int) Math.round(minDuration + ((maxDuration - minDuration) * (quality / 10.0)));
 	}
 
 	public int calcLvl(float quality) {
-		return (int) Math.round(minlvl + ((maxlvl - minlvl) * (quality / 10.0)));
+		return (int) Math.round(minLvl + ((maxLvl - minLvl) * (quality / 10.0)));
 	}
 
 	public void writeInto(PotionMeta meta, int quality) {
@@ -134,7 +134,7 @@ public class BEffect {
 	}
 
 	public boolean isValid() {
-		return type != null && minlvl >= 0 && maxlvl >= 0 && minduration >= 0 && maxduration >= 0;
+		return type != null && minLvl >= 0 && maxLvl >= 0 && minDuration >= 0 && maxDuration >= 0;
 	}
 
 	public boolean isHidden() {
