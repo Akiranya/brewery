@@ -1,6 +1,6 @@
 ### Brewery is a Minecraft-Plugin for an alternate brewing process, including alcoholic Potions.
 
-[![Build Status](https://travis-ci.org/DieReicheErethons/Brewery.png?branch=master)](https://travis-ci.org/DieReicheErethons/Brewery)
+[![Build Status](https://github.com/DieReicheErethons/Brewery/actions/workflows/maven.yml/badge.svg)](https://github.com/DieReicheErethons/Brewery/actions/workflows/maven.yml)
 ![License: GPLv3](https://img.shields.io/badge/license-GPLv3-blue)
 [![Releases](https://img.shields.io/github/v/release/DieReicheErethons/Brewery)](https://github.com/DieReicheErethons/Brewery/releases/latest)
 
@@ -15,7 +15,7 @@
 
 ### JavaDocs
 
-[JavaDocs on Jitpack](https://javadoc.jitpack.io/com/github/DieReicheErethons/Brewery/-3166f8c81b-1/javadoc/index.html)
+[JavaDocs on Jitpack](https://javadoc.jitpack.io/com/github/DieReicheErethons/Brewery/3.1.1/javadoc/index.html)
 
 ### Maven
 
@@ -28,11 +28,11 @@
 <dependency>
    <groupId>com.github.DieReicheErethons</groupId>
    <artifactId>Brewery</artifactId>
-   <version>3.1</version>
+   <version>3.1.1</version>
    <scope>provided</scope>
 </dependency>
 ```
-_For older maven releases see [here](https://github.com/DieReicheErethons/Brewery/blob/v2.1.2/README.md)_
+
 
 
 ### License

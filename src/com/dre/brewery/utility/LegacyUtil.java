@@ -13,7 +13,7 @@ import org.bukkit.material.Wood;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.Set;
 
 import static com.dre.brewery.BCauldron.EMPTY;
@@ -42,7 +42,9 @@ public class LegacyUtil {
 		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException ignored) {
 		}
 
-		Set<Material> planks = EnumSet.noneOf(Material.class);
+		// EnumSet not supposed to be used anymore
+		// See https://www.spigotmc.org/threads/spigot-bungeecord-1-19.559742/
+		Set<Material> planks = new HashSet<>();
 		for (Material m : Material.values()) {
 			if (m.name().endsWith("PLANKS")) {
 				planks.add(m);
@@ -50,7 +52,7 @@ public class LegacyUtil {
 		}
 		PLANKS = planks;
 
-		Set<Material> woodStairs = EnumSet.noneOf(Material.class);
+		Set<Material> woodStairs = new HashSet<>();
 		Material[] gotStairs = {
 			get("OAK_STAIRS", "WOOD_STAIRS"),
 			get("SPRUCE_STAIRS", "SPRUCE_WOOD_STAIRS"),
@@ -60,6 +62,7 @@ public class LegacyUtil {
 			get("DARK_OAK_STAIRS"),
 			get("CRIMSON_STAIRS"),
 			get("WARPED_STAIRS"),
+			get("MANGROVE_STAIRS"),
 		};
 		for (Material stair : gotStairs) {
 			if (stair != null) {
@@ -69,7 +72,7 @@ public class LegacyUtil {
 		WOOD_STAIRS = woodStairs;
 
 
-		Set<Material> fences = EnumSet.noneOf(Material.class);
+		Set<Material> fences = new HashSet<>();
 		for (Material m : Material.values()) {
 			if (m.name().endsWith("FENCE")) {
 				fences.add(m);
@@ -186,6 +189,8 @@ public class LegacyUtil {
 				return 7;
 			} else if (material.startsWith("WARPED")) {
 				return 8;
+			} else if (material.startsWith("MANGROVE")) {
+				return 9;
 			} else {
 				return 0;
 			}
