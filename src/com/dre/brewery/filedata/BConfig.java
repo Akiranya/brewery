@@ -56,9 +56,9 @@ public class BConfig {
 	public static boolean hasVault; // Vault
 	public static boolean useCitadel; // CivCraft/DevotedMC Citadel
 	public static boolean useGMInventories; // GamemodeInventories
-	public static Boolean hasSlimefun = null; // Slimefun ; Null if not checked
-	public static Boolean hasMMOItems = null; // MMOItems ; Null if not checked
-	public static Boolean hasItemsAdder = null; // ItemsAdder ; Null if not checked
+	public static boolean hasSlimefun; // Slimefun
+	public static boolean hasMMOItems; // MMOItems
+	public static boolean hasItemsAdder; // ItemsAdder
 	public static boolean hasChestShop;
 	public static boolean hasShopKeepers;
 	public static boolean hasPAPI;
@@ -219,6 +219,9 @@ public class BConfig {
 		hasChestShop = plMan.isPluginEnabled("ChestShop");
 		hasShopKeepers = plMan.isPluginEnabled("Shopkeepers");
 		hasPAPI = plMan.isPluginEnabled("PlaceholderAPI");
+		hasSlimefun = plMan.isPluginEnabled("Slimefun");
+		hasMMOItems = plMan.isPluginEnabled("MMOItems");
+		hasItemsAdder = plMan.isPluginEnabled("ItemsAdder");
 
 		// various Settings
 		DataSave.autoSave = config.getInt("autosave", 3);

@@ -273,7 +273,9 @@ public class P extends JavaPlugin {
 		BCauldronRecipe.getConfigRecipes().clear();
 		BCauldronRecipe.numConfigRecipes = 0;
 		BConfig.customItems.clear();
-		BConfig.hasMMOItems = null;
+		BConfig.hasMMOItems = false;
+		BConfig.hasSlimefun = false;
+		BConfig.hasItemsAdder = false;
 		DistortChat.commands = null;
 		BConfig.drainItems.clear();
 		if (BConfig.useLB) {

@@ -14,12 +14,7 @@ public class MMOItemsPluginItem extends PluginItem {
 
 	@Override
 	public boolean matches(ItemStack item) {
-		if (BConfig.hasMMOItems == null) {
-			BConfig.hasMMOItems = P.p.getServer().getPluginManager().isPluginEnabled("MMOItems")
-				&& P.p.getServer().getPluginManager().isPluginEnabled("MythicLib");
-		}
 		if (!BConfig.hasMMOItems) return false;
-
 		try {
 			NBTItem nbtItem = NBTItem.get(item);
 			if (!nbtItem.hasType()) return false;

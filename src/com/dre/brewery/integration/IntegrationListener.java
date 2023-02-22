@@ -313,10 +313,6 @@ public class IntegrationListener implements Listener {
 	public void onInteract(PlayerInteractEvent event) {
 		// Catch the Interact Event early, so MMOItems does not act before us and cancel the event while we try to add it to the Cauldron
 		if (!P.use1_9) return;
-		if (BConfig.hasMMOItems == null) {
-			BConfig.hasMMOItems = P.p.getServer().getPluginManager().isPluginEnabled("MMOItems")
-				&& P.p.getServer().getPluginManager().isPluginEnabled("MythicLib");
-		}
 		if (!BConfig.hasMMOItems) return;
 		try {
 			if (event.getAction() == Action.RIGHT_CLICK_BLOCK && event.hasItem() && event.getHand() == EquipmentSlot.HAND) {
