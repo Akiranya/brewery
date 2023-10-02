@@ -12,10 +12,16 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
 
+	<distributionManagement>
+		<repository>
+			<id>mewcraft-releases</id>
+			<url>file://${user.home}/MewcraftRepository</url>
+		</repository>
+	</distributionManagement>
+
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<testSourceDirectory>test</testSourceDirectory>
-
 		<resources>
 			<!-- Static resources -->
 			<resource>
@@ -31,7 +37,6 @@
 				</excludes>
 			</resource>
 		</resources>
-
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -43,7 +48,6 @@
 					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
@@ -70,7 +74,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
@@ -83,7 +86,6 @@
 						</goals>
 					</execution>
 				</executions>
-
 				<configuration>
 					<doctitle>Brewery - Javadocs</doctitle>
 					<windowtitle>Brewery - Javadocs</windowtitle>
@@ -95,6 +97,7 @@
 			</plugin>
 		</plugins>
 	</build>
+
 	<repositories>
 		<repository>
 			<id>md_5-public</id>
@@ -147,7 +150,6 @@
 			<id>placeholderapi</id>
 			<url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
 		</repository>
-
 	</repositories>
 
 	<dependencies>
